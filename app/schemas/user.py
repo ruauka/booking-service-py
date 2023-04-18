@@ -7,4 +7,3 @@ class UserRequest(BaseModel):
 
     class Config:
         orm_mode = True
-

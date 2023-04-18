@@ -28,7 +28,6 @@ if config.config_file_name is not None:
 # from myapp import mymodel
 from app.storage.database import Base
 # импорт моделей для обогащения Base
-import app.models
 
 target_metadata = Base.metadata
 

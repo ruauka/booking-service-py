@@ -1,8 +1,6 @@
 from app.storage.database import Base
 from sqlalchemy import Column, String
-
 from app.schemas.user import UserRequest
-from app.storage.dao import BaseDAO
 
 
 class User(Base):
@@ -26,7 +24,3 @@ class User(Base):
 
     def __repr__(self):
         return str(self)
-
-
-class UserDAO(BaseDAO):
-    model = User
