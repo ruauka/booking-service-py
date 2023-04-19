@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, Response
 from sqlalchemy.ext.asyncio import AsyncSession
+from pydantic import parse_obj_as
 
 from app.router.auth.auth import get_password_hash, verify_user, create_access_token
 from app.router.auth.dependencies import auth_user
@@ -27,7 +28,7 @@ async def register_user(
     hashed_password = get_password_hash(user.password)
     new_user = await UserDAO.add(session, user.encode(hashed_password))
 
-    return UserResponse(id=new_user.id, email=new_user.email)
+    return parse_obj_as(UserResponse, new_user)
 
 
 @router.post("/login")
@@ -54,4 +55,4 @@ async def logout_user(response: Response) -> dict[str, str]:
 
 @router.get("/me")
 async def read_users_me(user: User = Depends(auth_user)) -> UserResponse:
-    return UserResponse(id=user.id, email=user.email)
+    return parse_obj_as(UserResponse, user)
