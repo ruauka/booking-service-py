@@ -4,7 +4,7 @@ from fastapi import Depends, Request
 from jose import jwt, JWTError, ExpiredSignatureError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.exceptions import TokenAbsentErr, JWTExpiredErr, IncorrectJWTFormatErr, NoUserErr
+from app.errors import TokenAbsentErr, JWTExpiredErr, IncorrectJWTFormatErr, NoUserErr
 from app.models.user import User
 from app.storage.database import get_session
 from app.storage.user import UserDAO

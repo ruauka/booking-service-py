@@ -1,14 +1,11 @@
 from sqlalchemy import Column, String
 
 from app.storage.database import Base
-from app.schemas.user import UserRequest
 
 
 class User(Base):
     email = Column(String, nullable=False, unique=True)
     hashed_password = Column(String, nullable=False)
-
-
 
     def __str__(self):
         return (

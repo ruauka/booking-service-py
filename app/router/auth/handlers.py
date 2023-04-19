@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.router.auth.auth import get_password_hash, verify_user, create_access_token
 from app.router.auth.dependencies import auth_user
-from app.exceptions import UserAlreadyExistsErr, IncorrectEmailOrPasswordErr
+from app.errors import UserAlreadyExistsErr, IncorrectEmailOrPasswordErr
 from app.storage.database import get_session
 from app.schemas.user import UserRequest, UserResponse
 from app.models.user import User
