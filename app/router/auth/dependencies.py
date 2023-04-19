@@ -11,7 +11,7 @@ from app.storage.user import UserDAO
 from config import cfg
 
 
-async def get_token(request: Request) -> Optional[str]:
+def get_token(request: Request) -> Optional[str]:
     token = request.cookies.get("access_token")
     if not token:
         raise TokenAbsentErr
@@ -19,7 +19,7 @@ async def get_token(request: Request) -> Optional[str]:
     return token
 
 
-async def check_token(token: str = Depends(get_token)) -> Optional[dict]:
+def check_token(token: str = Depends(get_token)) -> Optional[dict]:
     try:
         # expire проверяется jwt.decode
         payload = jwt.decode(
