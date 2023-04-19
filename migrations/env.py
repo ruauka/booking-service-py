@@ -28,8 +28,20 @@ if config.config_file_name is not None:
 # from myapp import mymodel
 from app.storage.database import Base
 # импорт моделей для обогащения Base
+from app.models.booking import Booking
+from app.models.hotel import Hotel
+from app.models.room import Room
+from app.models.user import User
+
+__all__ = (
+    "User",
+    "Booking",
+    "Hotel",
+    "Room"
+)
 
 target_metadata = Base.metadata
+
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:

@@ -1,23 +1,13 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Response
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.storage.database import get_session
-from app.schemas.user import UserRequest
-from app.models.user import User
 from app.storage.user import UserDAO
 
 router = APIRouter(
     prefix="/users",
     tags=["Users"],
 )
-
-
-@router.post("/registration")
-async def register_user(
-        user: UserRequest,
-        session: AsyncSession = Depends(get_session),
-):
-    resp = await UserDAO.add(session, User.parse(user))
-    return resp
 
 
 @router.get("/{user_id}")
