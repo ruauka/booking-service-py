@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 from pydantic import parse_obj_as
 
-from app.router.auth.auth import get_password_hash, verify_user, create_access_token
-from app.router.auth.dependencies import auth_user
+from app.auth.auth import get_password_hash, verify_user, create_access_token
+from app.auth.dependencies import auth_user
 from app.errors import UserAlreadyExistsErr, IncorrectEmailOrPasswordErr
 from app.storage.database import get_session
 from app.schemas.user import UserRequest, UserResponse

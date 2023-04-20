@@ -1,6 +1,6 @@
 from typing import Any
 
-from app.router.auth.auth import get_password_hash
+from app.auth.auth import get_password_hash
 from app.schemas.user import UserUpdateRequest
 
 
