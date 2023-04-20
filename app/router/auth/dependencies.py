@@ -4,7 +4,7 @@ from fastapi import Depends, Request
 from jose import jwt, JWTError, ExpiredSignatureError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.errors import TokenAbsentErr, JWTExpiredErr, IncorrectJWTFormatErr, NoUserErr
+from app.errors import TokenAbsentErr, JWTExpiredErr, IncorrectJWTFormatErr, UnauthorizedUserErr
 from app.models.user import User
 from app.storage.database import get_session
 from app.storage.user import UserDAO
@@ -39,10 +39,10 @@ async def auth_user(
 ) -> User:
     user_id: str = payload.get("sub")
     if not user_id:
-        raise NoUserErr
+        raise UnauthorizedUserErr
 
     user = await UserDAO.get_one(session, id=int(user_id))
     if not user:
-        raise NoUserErr
+        raise UnauthorizedUserErr
 
     return user

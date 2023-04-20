@@ -1,8 +1,18 @@
 from fastapi import HTTPException, status
 
 UserAlreadyExistsErr = HTTPException(
-    status_code=status.HTTP_409_CONFLICT,
+    status_code=status.HTTP_400_BAD_REQUEST,
     detail="User already exists",
+)
+
+InstanceAlreadyExistsErr = HTTPException(
+    status_code=status.HTTP_400_BAD_REQUEST,
+    detail="Instance already exists",
+)
+
+UserNotFoundErr = HTTPException(
+    status_code=status.HTTP_400_BAD_REQUEST,
+    detail="User not found",
 )
 
 IncorrectEmailOrPasswordErr = HTTPException(
@@ -25,4 +35,9 @@ IncorrectJWTFormatErr = HTTPException(
     detail="Incorrect JWT Format",
 )
 
-NoUserErr = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+UnauthorizedUserErr = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+
+EmptyFieldsToUpdateErr = HTTPException(
+    status_code=status.HTTP_400_BAD_REQUEST,
+    detail="No fields to update",
+)

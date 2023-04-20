@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel, EmailStr
 
 
@@ -11,6 +12,14 @@ class UserRequest(BaseModel):
             "email": self.email,
             "hashed_password": self.password
         }
+
+
+class UserUpdateRequest(BaseModel):
+    email: Optional[EmailStr]
+    password: Optional[str]
+
+    def empty_check(self) -> bool:
+        return any(vars(self).values())
 
 
 class UserResponse(BaseModel):
