@@ -1,5 +1,5 @@
 from typing import Any
-import sqlalchemy.exc
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, insert, delete, update
 
@@ -10,7 +10,7 @@ class BaseDAO:
     model = None
 
     @classmethod
-    async def add(cls, session: AsyncSession, data) -> Any:
+    async def add(cls, session: AsyncSession, data: dict) -> Any:
         query = insert(cls.model).values(**data).returning(cls.model)
         result = await session.execute(query)
         await session.commit()
@@ -29,18 +29,18 @@ class BaseDAO:
         return result.scalars().all()
 
     @classmethod
-    async def update(cls, session: AsyncSession, data, **filters) -> Any:
-        query = update(cls.model).filter_by(**filters).values(**data).returning(cls.model)
+    async def update(cls, session: AsyncSession, data, id) -> Any:
+        query = update(cls.model).where(cls.model.id == id).values(**data).returning(cls.model)
         try:
             result = await session.execute(query)
             await session.commit()
             return result.scalar_one_or_none()
-        except sqlalchemy.exc.IntegrityError:
+        except IntegrityError:
             raise InstanceAlreadyExistsErr
 
     @classmethod
-    async def delete(cls, session: AsyncSession, **filters) -> Any:
-        query = delete(cls.model).filter_by(**filters).returning(cls.model)
+    async def delete(cls, session: AsyncSession, id) -> Any:
+        query = delete(cls.model).where(cls.model.id == id).returning(cls.model)
         result = await session.execute(query)
         await session.commit()
         return result.scalar_one_or_none()

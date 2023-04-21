@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from pydantic import parse_obj_as
 
-from app.errors import UserNotFoundErr, EmptyFieldsToUpdateErr
+from app.errors import UserNotFoundErr, EmptyFieldsToUpdateErr, NoUsersErr
 from app.schemas.user import UserResponse, UserUpdateRequest
 from app.storage.database import get_session
 from app.storage.user import UserDAO
@@ -29,6 +29,8 @@ async def get_all_users(
         session: AsyncSession = Depends(get_session),
 ) -> list[UserResponse]:
     users = await UserDAO.get_all(session)
+    if len(users) == 0:
+        raise NoUsersErr
     return parse_obj_as(List[UserResponse], users)
 
 
@@ -48,9 +50,7 @@ async def update_user_by_id(
 
     # установка новых значений полей
     updated_fields: dict[str, Any] = set_user_new_fields(user, new_fields)
-
-    new_user = await UserDAO.update(session, updated_fields, id=user_id)
-
+    new_user = await UserDAO.update(session, updated_fields, user_id)
     return parse_obj_as(UserResponse, new_user)
 
 
@@ -62,5 +62,6 @@ async def delete_user_by_id(
     user = await UserDAO.get_one(session, id=user_id)
     if not user:
         raise UserNotFoundErr
-    users = await UserDAO.delete(session, id=user_id)
+
+    users = await UserDAO.delete(session, user_id)
     return parse_obj_as(UserResponse, users)
