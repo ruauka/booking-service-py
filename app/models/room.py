@@ -1,5 +1,5 @@
 from app.storage.database import Base
-from sqlalchemy import Column, Integer, String, JSON, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, ARRAY
 
 
 class Room(Base):
@@ -7,7 +7,7 @@ class Room(Base):
     name = Column(String, nullable=False)
     description = Column(String, nullable=True)
     price = Column(Integer, nullable=False)
-    services = Column(JSON, nullable=True)
+    services = Column(ARRAY(String(255)), nullable=True)
     quantity = Column(Integer, nullable=False)
     image_id = Column(Integer)
 

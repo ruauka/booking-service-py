@@ -1,11 +1,11 @@
 from app.storage.database import Base
-from sqlalchemy import Column, Integer, String, JSON
+from sqlalchemy import Column, Integer, String, ARRAY
 
 
 class Hotel(Base):
     name = Column(String, nullable=False)
     location = Column(String, nullable=False)
-    services = Column(JSON)
+    services = Column(ARRAY(String(255)))
     rooms_quantity = Column(Integer, nullable=False)
     image_id = Column(Integer)
 

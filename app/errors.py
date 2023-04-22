@@ -25,6 +25,21 @@ IncorrectEmailOrPasswordErr = HTTPException(
     detail="Incorrect email or password",
 )
 
+HotelAlreadyExistsErr = HTTPException(
+    status_code=status.HTTP_400_BAD_REQUEST,
+    detail="Hotel already exists",
+)
+
+HotelNotFoundErr = HTTPException(
+    status_code=status.HTTP_400_BAD_REQUEST,
+    detail="Hotel not found",
+)
+
+NoHotelsErr = HTTPException(
+    status_code=status.HTTP_400_BAD_REQUEST,
+    detail="No hotels yet",
+)
+
 JWTExpiredErr = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
     detail="JWT expired",

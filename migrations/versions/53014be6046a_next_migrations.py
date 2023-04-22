@@ -1,8 +1,8 @@
 """Next migrations
 
-Revision ID: 23f242e5f4bd
+Revision ID: 53014be6046a
 Revises: 
-Create Date: 2023-04-19 13:13:05.248670
+Create Date: 2023-04-22 21:52:47.746971
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '23f242e5f4bd'
+revision = '53014be6046a'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -21,7 +21,7 @@ def upgrade() -> None:
     op.create_table('hotels',
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('location', sa.String(), nullable=False),
-    sa.Column('services', sa.JSON(), nullable=True),
+    sa.Column('services', sa.ARRAY(sa.String(length=255)), nullable=True),
     sa.Column('rooms_quantity', sa.Integer(), nullable=False),
     sa.Column('image_id', sa.Integer(), nullable=True),
     sa.Column('id', sa.Integer(), nullable=False),
@@ -39,7 +39,7 @@ def upgrade() -> None:
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('description', sa.String(), nullable=True),
     sa.Column('price', sa.Integer(), nullable=False),
-    sa.Column('services', sa.JSON(), nullable=True),
+    sa.Column('services', sa.ARRAY(sa.String(length=255)), nullable=True),
     sa.Column('quantity', sa.Integer(), nullable=False),
     sa.Column('image_id', sa.Integer(), nullable=True),
     sa.Column('id', sa.Integer(), nullable=False),

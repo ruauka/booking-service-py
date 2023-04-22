@@ -21,6 +21,9 @@ async def get_user_by_id(
         session: AsyncSession = Depends(get_session),
 ) -> UserResponse:
     user = await UserDAO.get_one(session, id=user_id)
+    if not user:
+        raise UserNotFoundErr
+
     return parse_obj_as(UserResponse, user)
 
 
@@ -31,6 +34,7 @@ async def get_all_users(
     users = await UserDAO.get_all(session)
     if len(users) == 0:
         raise NoUsersErr
+
     return parse_obj_as(List[UserResponse], users)
 
 
