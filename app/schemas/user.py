@@ -18,8 +18,8 @@ class UserUpdateRequest(BaseModel):
     email: Optional[EmailStr]
     password: Optional[str]
 
-    def empty_check(self) -> bool:
-        return any(vars(self).values())
+    def is_empty(self) -> bool:
+        return not any(vars(self).values())
 
 
 class UserResponse(BaseModel):

@@ -45,7 +45,7 @@ async def update_user_by_id(
         session: AsyncSession = Depends(get_session),
 ) -> UserResponse:
     # проверка на полностью пустые поля
-    if not new_fields.empty_check():
+    if new_fields.is_empty():
         raise EmptyFieldsToUpdateErr
 
     user = await UserDAO.get_one(session, id=user_id)

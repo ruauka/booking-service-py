@@ -19,3 +19,18 @@ def set_user_new_fields(user, new_fields: UserUpdateRequest) -> dict[str, Any]:
     }
 
     return updated_fields
+
+
+def set_new_fields(instance, new_fields) -> dict[str, Any]:
+    for key, value in new_fields:
+        if not value:
+            continue
+        setattr(instance, key, value)
+
+    return instance.todict()
+
+# def set_new_fields(instance, **new_fields) -> dict[str, Any]:
+#     for key in new_fields.keys():
+#         setattr(instance, key, new_fields[key])
+#
+#     return instance.todict()
