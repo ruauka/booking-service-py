@@ -40,6 +40,21 @@ NoHotelsErr = HTTPException(
     detail="No hotels yet",
 )
 
+RoomAlreadyExistsErr = HTTPException(
+    status_code=status.HTTP_400_BAD_REQUEST,
+    detail="Room already exists",
+)
+
+RoomNotFoundErr = HTTPException(
+    status_code=status.HTTP_400_BAD_REQUEST,
+    detail="Room not found",
+)
+
+NoRoomsErr = HTTPException(
+    status_code=status.HTTP_400_BAD_REQUEST,
+    detail="No rooms yet",
+)
+
 JWTExpiredErr = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
     detail="JWT expired",

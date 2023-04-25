@@ -19,7 +19,7 @@ router = APIRouter(
 async def add_hotel(
         hotel: HotelRequest,
         session: AsyncSession = Depends(get_session),
-):
+) -> HotelResponse:
     hotel_exist = await HotelDAO.get_one(session, name=hotel.name)
     if hotel_exist:
         raise HotelAlreadyExistsErr
@@ -56,7 +56,7 @@ async def update_hotel_by_id(
         hotel_id: int,
         new_fields: HotelUpdateRequest,
         session: AsyncSession = Depends(get_session),
-):
+) -> HotelResponse:
     # проверка на полностью пустые поля
     if new_fields.is_empty():
         raise EmptyFieldsToUpdateErr
