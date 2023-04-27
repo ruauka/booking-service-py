@@ -76,3 +76,23 @@ EmptyFieldsToUpdateErr = HTTPException(
     status_code=status.HTTP_400_BAD_REQUEST,
     detail="No fields to update",
 )
+
+NoAdminErr = HTTPException(
+    status_code=status.HTTP_400_BAD_REQUEST,
+    detail="Yuo'r not admin",
+)
+
+DBErr = HTTPException(
+    status_code=status.HTTP_400_BAD_REQUEST,
+    detail="Db error",
+)
+
+UnknownErr = HTTPException(
+    status_code=status.HTTP_400_BAD_REQUEST,
+    detail="Unknown error",
+)
+
+UnknownErr = HTTPException(
+    status_code=status.HTTP_400_BAD_REQUEST,
+    detail="Unknown error",
+)

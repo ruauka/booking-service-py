@@ -5,10 +5,12 @@ from app.router.auth import router as auth_router
 from app.router.user import router as user_router
 from app.router.hotel import router as hotel_router
 from app.router.room import router as room_router
+from app.router.uploader import router as uploader_router
 
 app = FastAPI()
 
 app.include_router(auth_router)
+app.include_router(uploader_router)
 app.include_router(user_router)
 app.include_router(hotel_router)
 app.include_router(room_router)

@@ -4,7 +4,7 @@ from fastapi import Depends, Request
 from jose import jwt, JWTError, ExpiredSignatureError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.errors import TokenAbsentErr, JWTExpiredErr, IncorrectJWTFormatErr, UnauthorizedUserErr
+from app.errors import TokenAbsentErr, JWTExpiredErr, IncorrectJWTFormatErr, UnauthorizedUserErr, NoAdminErr
 from app.models.user import User
 from app.storage.database import get_session
 from app.storage.user import UserDAO
@@ -46,3 +46,10 @@ async def auth_user(
         raise UnauthorizedUserErr
 
     return user
+
+
+# async def is_admin(user: User = Depends(auth_user)) -> User:
+#     if user.role != "admin":
+#         raise NoAdminErr
+#
+#     return user
