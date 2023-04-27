@@ -26,3 +26,14 @@ class Room(Base):
 
     def __repr__(self):
         return str(self)
+
+    def todict(self):
+        return {
+            "hotel_id": self.hotel_id,
+            "name": self.name,
+            "description": self.description,
+            "price": self.price,
+            "services": self.services,
+            "quantity": self.quantity,
+            "image_id": self.image_id,
+        }

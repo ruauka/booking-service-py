@@ -3,12 +3,9 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from pydantic import parse_obj_as
 
-from app.errors import HotelAlreadyExistsErr, HotelNotFoundErr, NoHotelsErr, EmptyFieldsToUpdateErr, \
-    RoomAlreadyExistsErr, RoomNotFoundErr, NoRoomsErr
-from app.schemas.hotel import HotelRequest, HotelResponse, HotelUpdateRequest
-from app.schemas.room import RoomRequest, RoomResponse
+from app.errors import EmptyFieldsToUpdateErr, RoomAlreadyExistsErr, RoomNotFoundErr, NoRoomsErr
+from app.schemas.room import RoomRequest, RoomResponse, RoomUpdateRequest
 from app.storage.database import get_session
-from app.storage.hotel import HotelDAO
 from app.storage.room import RoomDAO
 from app.utils import set_new_fields
 
@@ -52,3 +49,36 @@ async def get_all_rooms(
         raise NoRoomsErr
 
     return parse_obj_as(List[RoomResponse], rooms)
+
+
+@router.put("/{room_id}")
+async def update_room_by_id(
+        room_id: int,
+        new_fields: RoomUpdateRequest,
+        session: AsyncSession = Depends(get_session),
+) -> RoomResponse:
+    # проверка на полностью пустые поля
+    if new_fields.is_empty():
+        raise EmptyFieldsToUpdateErr
+
+    room = await RoomDAO.get_one(session, id=room_id)
+    if not room:
+        raise RoomNotFoundErr
+
+    # установка новых значений полей
+    updated_fields: dict[str, Any] = set_new_fields(room, new_fields)
+    new_room = await RoomDAO.update(session, updated_fields, room_id)
+    return parse_obj_as(RoomResponse, new_room)
+
+
+@router.delete("/{room_id}")
+async def delete_room_by_id(
+        room_id: int,
+        session: AsyncSession = Depends(get_session),
+) -> RoomResponse:
+    room = await RoomDAO.get_one(session, id=room_id)
+    if not room:
+        raise RoomNotFoundErr
+
+    room = await RoomDAO.delete(session, room_id)
+    return parse_obj_as(RoomResponse, room)

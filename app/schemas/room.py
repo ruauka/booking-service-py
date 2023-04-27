@@ -12,6 +12,19 @@ class RoomRequest(BaseModel):
     image_id: Optional[int]
 
 
+class RoomUpdateRequest(BaseModel):
+    hotel_id: Optional[int]
+    name: Optional[str]
+    description: Optional[str]
+    price: Optional[int]
+    services: Optional[List[str]]
+    quantity: Optional[int]
+    image_id: Optional[int]
+
+    def is_empty(self) -> bool:
+        return not any(vars(self).values())
+
+
 class RoomResponse(BaseModel):
     id: str
     name: str

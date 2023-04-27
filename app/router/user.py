@@ -67,5 +67,5 @@ async def delete_user_by_id(
     if not user:
         raise UserNotFoundErr
 
-    users = await UserDAO.delete(session, user_id)
-    return parse_obj_as(UserResponse, users)
+    user = await UserDAO.delete(session, user_id)
+    return parse_obj_as(UserResponse, user)

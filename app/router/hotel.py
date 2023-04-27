@@ -72,7 +72,7 @@ async def update_hotel_by_id(
 
 
 @router.delete("/{hotel_id}")
-async def delete_user_by_id(
+async def delete_hotel_by_id(
         hotel_id: int,
         session: AsyncSession = Depends(get_session),
 ) -> HotelResponse:
@@ -80,5 +80,5 @@ async def delete_user_by_id(
     if not hotel:
         raise HotelNotFoundErr
 
-    hotels = await HotelDAO.delete(session, hotel_id)
-    return parse_obj_as(HotelResponse, hotels)
+    hotel = await HotelDAO.delete(session, hotel_id)
+    return parse_obj_as(HotelResponse, hotel)
