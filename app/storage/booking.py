@@ -16,6 +16,39 @@ class BookingDAO(BaseDAO):
 
     @classmethod
     async def add(cls, session: AsyncSession, user_id: int, room_id: int, date_from: date, date_to: date):
+        try:
+            add_booking_query = (
+                insert(Booking)
+                .values(
+                    room_id=room_id,
+                    user_id=user_id,
+                    date_from=date_from,
+                    date_to=date_to,
+                    price=await cls.get_room_price(session, room_id),
+                )
+                .returning(Booking)
+            )
+
+            new_booking = await session.execute(add_booking_query)
+            await session.commit()
+            return new_booking.scalar()
+        except (SQLAlchemyError, Exception) as err:
+            if isinstance(err, SQLAlchemyError):
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=str(err),
+                )
+            elif isinstance(err, Exception):
+                raise UnknownErr
+
+    @classmethod
+    async def get_room_price(cls, session: AsyncSession, room_id: int) -> int:
+        get_room_price_query = select(Room.price).filter_by(id=room_id)
+        room_price = await session.execute(get_room_price_query)
+        return room_price.scalar()
+
+    @classmethod
+    async def get_free_rooms(cls, session: AsyncSession, room_id: int, date_from: date, date_to: date) -> int:
         """"""
         """
         WITH booked_rooms AS (
@@ -74,28 +107,7 @@ class BookingDAO(BaseDAO):
 
             free_rooms = await session.execute(free_rooms_quant_query)
             free_rooms: int = free_rooms.scalar()
-
-            if free_rooms > 0:
-                get_room_price_query = select(Room.price).filter_by(id=room_id)
-                room_price = await session.execute(get_room_price_query)
-                room_price: int = room_price.scalar()
-                add_booking_query = (
-                    insert(Booking)
-                    .values(
-                        room_id=room_id,
-                        user_id=user_id,
-                        date_from=date_from,
-                        date_to=date_to,
-                        price=room_price,
-                    )
-                    .returning(Booking)
-                )
-
-                new_booking = await session.execute(add_booking_query)
-                await session.commit()
-                return new_booking.scalar()
-            else:
-                return None
+            return free_rooms
         except (SQLAlchemyError, Exception) as err:
             if isinstance(err, SQLAlchemyError):
                 raise HTTPException(

@@ -3,6 +3,15 @@ from pydantic import BaseModel, Json
 from datetime import date
 
 
+class BookingUpdateRequest(BaseModel):
+    room_id: Optional[int]
+    date_from: Optional[date]
+    date_to: Optional[date]
+
+    def is_empty(self) -> bool:
+        return not any(vars(self).values())
+
+
 class BookingResponse(BaseModel):
     id: int
     room_id: int
