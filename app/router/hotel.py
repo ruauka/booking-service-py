@@ -15,7 +15,7 @@ router = APIRouter(
 )
 
 
-@router.post("")
+@router.post("", status_code=201)
 async def add_hotel(
         hotel: HotelRequest,
         session: AsyncSession = Depends(get_session),

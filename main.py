@@ -6,6 +6,7 @@ from app.router.user import router as user_router
 from app.router.hotel import router as hotel_router
 from app.router.room import router as room_router
 from app.router.uploader import router as uploader_router
+from app.router.booking import router as booking_router
 
 app = FastAPI()
 
@@ -14,6 +15,7 @@ app.include_router(uploader_router)
 app.include_router(user_router)
 app.include_router(hotel_router)
 app.include_router(room_router)
+app.include_router(booking_router)
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)

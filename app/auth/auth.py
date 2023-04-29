@@ -31,7 +31,7 @@ async def verify_user(session: AsyncSession, email: EmailStr, password: str) -> 
 def create_access_token(data: dict) -> str:
     to_encode = data.copy()
 
-    expire = datetime.utcnow() + timedelta(minutes=30)
+    expire = datetime.utcnow() + timedelta(hours=24)
     to_encode.update({"exp": expire})
 
     encoded_jwt = jwt.encode(

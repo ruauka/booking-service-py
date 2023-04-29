@@ -23,8 +23,8 @@ class BaseDAO:
         return result.scalar_one_or_none()
 
     @classmethod
-    async def get_all(cls, session: AsyncSession) -> Any:
-        query = select(cls.model)
+    async def get_all(cls, session: AsyncSession, **filters) -> Any:
+        query = select(cls.model).filter_by(**filters)
         result = await session.execute(query)
         return result.scalars().all()
 

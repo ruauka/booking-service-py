@@ -55,6 +55,21 @@ NoRoomsErr = HTTPException(
     detail="No rooms yet",
 )
 
+NoAvailableRooms = HTTPException(
+    status_code=status.HTTP_400_BAD_REQUEST,
+    detail="No available rooms",
+)
+
+NoBookingsErr = HTTPException(
+    status_code=status.HTTP_400_BAD_REQUEST,
+    detail="No bookings yet",
+)
+
+BookingNotFoundErr = HTTPException(
+    status_code=status.HTTP_400_BAD_REQUEST,
+    detail="Booking not found",
+)
+
 JWTExpiredErr = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
     detail="JWT expired",
@@ -85,11 +100,6 @@ NoAdminErr = HTTPException(
 DBErr = HTTPException(
     status_code=status.HTTP_400_BAD_REQUEST,
     detail="Db error",
-)
-
-UnknownErr = HTTPException(
-    status_code=status.HTTP_400_BAD_REQUEST,
-    detail="Unknown error",
 )
 
 UnknownErr = HTTPException(

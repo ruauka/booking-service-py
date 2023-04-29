@@ -16,7 +16,7 @@ router = APIRouter(
 )
 
 
-@router.post("/registration")
+@router.post("/registration", status_code=201)
 async def register_user(
         user: UserRequest,
         session: AsyncSession = Depends(get_session),
