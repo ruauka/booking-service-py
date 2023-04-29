@@ -1,11 +1,11 @@
 from datetime import date
-from typing import List, Any
+from typing import List
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from pydantic import parse_obj_as
 
 from app.auth.dependencies import auth_user
-from app.errors import NoBookingsErr, NoAvailableRooms, BookingNotFoundErr
+from app.errors import NoBookingsErr, NoAvailableRoomsErr, BookingNotFoundErr
 from app.models.user import User
 from app.schemas.booking import BookingResponse
 from app.storage.booking import BookingDAO
@@ -25,9 +25,22 @@ async def add_booking(
         user: User = Depends(auth_user),
         session: AsyncSession = Depends(get_session),
 ) -> BookingResponse:
-    booking = await BookingDAO.add_booking(session, user.id, room_id, date_from, date_to)
+    booking = await BookingDAO.add(session, user.id, room_id, date_from, date_to)
     if not booking:
-        raise NoAvailableRooms
+        raise NoAvailableRoomsErr
+
+    return parse_obj_as(BookingResponse, booking)
+
+
+@router.get("/{booking_id}")
+async def get_booking_by_id(
+        booking_id: int,
+        user: User = Depends(auth_user),
+        session: AsyncSession = Depends(get_session),
+) -> BookingResponse:
+    booking = await BookingDAO.get_one(session, id=booking_id, user_id=user.id)
+    if not booking:
+        raise BookingNotFoundErr
 
     return parse_obj_as(BookingResponse, booking)
 

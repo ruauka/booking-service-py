@@ -55,9 +55,9 @@ NoRoomsErr = HTTPException(
     detail="No rooms yet",
 )
 
-NoAvailableRooms = HTTPException(
+NoAvailableRoomsErr = HTTPException(
     status_code=status.HTTP_400_BAD_REQUEST,
-    detail="No available rooms",
+    detail="No rooms available for these dates",
 )
 
 NoBookingsErr = HTTPException(
@@ -77,7 +77,7 @@ JWTExpiredErr = HTTPException(
 
 TokenAbsentErr = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
-    detail="JWT absent",
+    detail="User unauthorized",
 )
 
 IncorrectJWTFormatErr = HTTPException(

@@ -1,8 +1,7 @@
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
-from starlette import status
 
 from app.errors import UnknownErr
 
