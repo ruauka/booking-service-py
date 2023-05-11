@@ -26,9 +26,7 @@ async def register_user(
         raise UserAlreadyExistsErr
 
     hashed_password = get_password_hash(user.password)
-    new_user = await UserDAO.add(session, user.encode(hashed_password))
-
-    return parse_obj_as(UserResponse, new_user)
+    return await UserDAO.add(session, user.encode(hashed_password))
 
 
 @router.post("/login")
@@ -55,4 +53,5 @@ async def logout_user(response: Response) -> dict[str, str]:
 
 @router.get("/me")
 async def read_users_me(user: User = Depends(auth_user)) -> UserResponse:
+    # return user
     return parse_obj_as(UserResponse, user)

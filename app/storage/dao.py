@@ -1,9 +1,9 @@
 from typing import Any
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, insert, delete, update
 
-from app.errors import InstanceAlreadyExistsErr
+from app.errors import InstanceAlreadyExistsErr, UnknownErr
 
 
 class BaseDAO:
@@ -35,8 +35,11 @@ class BaseDAO:
             result = await session.execute(query)
             await session.commit()
             return result.scalar_one_or_none()
-        except IntegrityError:
-            raise InstanceAlreadyExistsErr
+        except (SQLAlchemyError, Exception) as err:
+            if isinstance(err, SQLAlchemyError):
+                raise InstanceAlreadyExistsErr
+            elif isinstance(err, Exception):
+                raise UnknownErr
 
     @classmethod
     async def delete(cls, session: AsyncSession, id) -> Any:
@@ -49,3 +52,5 @@ class BaseDAO:
 # (без scalars() вернется список из кортежей объектов алхимии)
 # return result.scalars().all() преобразует ответ клиенту в список из словарей
 # словарь - объект модели, возвращенный из алхимии
+
+# return result.mappings().one_or_none() - добавляет название таблицы в ответ

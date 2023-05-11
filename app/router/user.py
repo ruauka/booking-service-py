@@ -24,7 +24,7 @@ async def get_user_by_id(
     if not user:
         raise UserNotFoundErr
 
-    return parse_obj_as(UserResponse, user)
+    return user
 
 
 @router.get("")
@@ -35,7 +35,7 @@ async def get_all_users(
     if len(users) == 0:
         raise NoUsersErr
 
-    return parse_obj_as(List[UserResponse], users)
+    return users
 
 
 @router.put("/{user_id}")
@@ -54,8 +54,7 @@ async def update_user_by_id(
 
     # установка новых значений полей
     updated_fields: dict[str, Any] = set_user_new_fields(user, new_fields)
-    new_user = await UserDAO.update(session, updated_fields, user_id)
-    return parse_obj_as(UserResponse, new_user)
+    return await UserDAO.update(session, updated_fields, user_id)
 
 
 @router.delete("/{user_id}")
@@ -67,5 +66,4 @@ async def delete_user_by_id(
     if not user:
         raise UserNotFoundErr
 
-    user = await UserDAO.delete(session, user_id)
-    return parse_obj_as(UserResponse, user)
+    return await UserDAO.delete(session, user_id)

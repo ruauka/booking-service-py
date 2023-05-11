@@ -1,4 +1,6 @@
 from datetime import date
+from typing import Any
+
 from fastapi import HTTPException, status
 from sqlalchemy import and_, func, insert, or_, select
 from sqlalchemy.exc import SQLAlchemyError
@@ -15,7 +17,7 @@ class BookingDAO(BaseDAO):
     model = Booking
 
     @classmethod
-    async def add(cls, session: AsyncSession, user_id: int, room_id: int, date_from: date, date_to: date):
+    async def add(cls, session: AsyncSession, user_id: int, room_id: int, date_from: date, date_to: date) -> Any:
         try:
             add_booking_query = (
                 insert(Booking)

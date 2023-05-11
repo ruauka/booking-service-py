@@ -24,8 +24,7 @@ async def add_room(
     if room_exist:
         raise RoomAlreadyExistsErr
 
-    new_room = await RoomDAO.add(session, room.dict())
-    return parse_obj_as(RoomResponse, new_room)
+    return await RoomDAO.add(session, room.dict())
 
 
 @router.get("/{room_id}")
@@ -37,7 +36,7 @@ async def get_room_by_id(
     if not room:
         raise RoomNotFoundErr
 
-    return parse_obj_as(RoomResponse, room)
+    return room
 
 
 @router.get("")
@@ -48,7 +47,7 @@ async def get_all_rooms(
     if len(rooms) == 0:
         raise NoRoomsErr
 
-    return parse_obj_as(List[RoomResponse], rooms)
+    return rooms
 
 
 @router.put("/{room_id}")
@@ -67,8 +66,7 @@ async def update_room_by_id(
 
     # установка новых значений полей
     updated_fields: dict[str, Any] = set_new_fields(room, new_fields)
-    new_room = await RoomDAO.update(session, updated_fields, room_id)
-    return parse_obj_as(RoomResponse, new_room)
+    return await RoomDAO.update(session, updated_fields, room_id)
 
 
 @router.delete("/{room_id}")
@@ -80,5 +78,4 @@ async def delete_room_by_id(
     if not room:
         raise RoomNotFoundErr
 
-    room = await RoomDAO.delete(session, room_id)
-    return parse_obj_as(RoomResponse, room)
+    return await RoomDAO.delete(session, room_id)

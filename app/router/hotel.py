@@ -1,7 +1,6 @@
-from typing import List, Any
+from typing import Any
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-from pydantic import parse_obj_as
 
 from app.errors import HotelAlreadyExistsErr, HotelNotFoundErr, NoHotelsErr, EmptyFieldsToUpdateErr
 from app.schemas.hotel import HotelRequest, HotelResponse, HotelUpdateRequest
@@ -24,8 +23,7 @@ async def add_hotel(
     if hotel_exist:
         raise HotelAlreadyExistsErr
 
-    new_hotel = await HotelDAO.add(session, hotel.dict())
-    return parse_obj_as(HotelResponse, new_hotel)
+    return await HotelDAO.add(session, hotel.dict())
 
 
 @router.get("/{hotel_id}")
@@ -37,7 +35,7 @@ async def get_hotel_by_id(
     if not hotel:
         raise HotelNotFoundErr
 
-    return parse_obj_as(HotelResponse, hotel)
+    return hotel
 
 
 @router.get("")
@@ -48,7 +46,7 @@ async def get_all_hotels(
     if len(hotels) == 0:
         raise NoHotelsErr
 
-    return parse_obj_as(List[HotelResponse], hotels)
+    return hotels
 
 
 @router.put("/{hotel_id}")
@@ -67,8 +65,7 @@ async def update_hotel_by_id(
 
     # установка новых значений полей
     updated_fields: dict[str, Any] = set_new_fields(hotel, new_fields)
-    new_hotel = await HotelDAO.update(session, updated_fields, hotel_id)
-    return parse_obj_as(HotelResponse, new_hotel)
+    return await HotelDAO.update(session, updated_fields, hotel_id)
 
 
 @router.delete("/{hotel_id}")
@@ -80,5 +77,4 @@ async def delete_hotel_by_id(
     if not hotel:
         raise HotelNotFoundErr
 
-    hotel = await HotelDAO.delete(session, hotel_id)
-    return parse_obj_as(HotelResponse, hotel)
+    return await HotelDAO.delete(session, hotel_id)

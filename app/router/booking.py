@@ -30,8 +30,7 @@ async def add_booking(
     if free_rooms <= 0:
         raise NoAvailableRoomsErr
 
-    booking = await BookingDAO.add(session, user.id, room_id, date_from, date_to)
-    return parse_obj_as(BookingResponse, booking)
+    return await BookingDAO.add(session, user.id, room_id, date_from, date_to)
 
 
 @router.get("/{booking_id}")
@@ -44,7 +43,7 @@ async def get_booking_by_id(
     if not booking:
         raise BookingNotFoundErr
 
-    return parse_obj_as(BookingResponse, booking)
+    return booking
 
 
 @router.get("")
@@ -56,7 +55,7 @@ async def get_all_bookings_by_user(
     if len(bookings) == 0:
         raise NoBookingsErr
 
-    return parse_obj_as(List[BookingResponse], bookings)
+    return bookings
 
 
 @router.put("/{booking_id}")
@@ -85,8 +84,7 @@ async def update_booking_by_id(
     if free_rooms <= 0:
         raise NoAvailableRoomsErr
 
-    updated_booking = await BookingDAO.update(session, updated_fields, booking_id)
-    return parse_obj_as(BookingResponse, updated_booking)
+    return await BookingDAO.update(session, updated_fields, booking_id)
 
 
 @router.delete("/{booking_id}")
@@ -99,5 +97,4 @@ async def delete_booking_by_id(
     if not booking:
         raise BookingNotFoundErr
 
-    booking = await BookingDAO.delete(session, booking_id)
-    return parse_obj_as(BookingResponse, booking)
+    return await BookingDAO.delete(session, booking_id)
