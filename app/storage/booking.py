@@ -1,6 +1,5 @@
 from datetime import date
 from typing import Any
-
 from fastapi import HTTPException, status
 from sqlalchemy import and_, func, insert, or_, select
 from sqlalchemy.exc import SQLAlchemyError
@@ -10,14 +9,25 @@ from app.errors import UnknownErr
 from app.models.booking import Booking
 from app.models.room import Room
 from app.storage.dao import BaseDAO
-from app.storage.database import engine
 
 
 class BookingDAO(BaseDAO):
+    """
+    Класс для использования DAO методов.
+    """
     model = Booking
 
     @classmethod
     async def add(cls, session: AsyncSession, user_id: int, room_id: int, date_from: date, date_to: date) -> Any:
+        """
+        Добавление бронирования по условиям.
+        :param session: async сессия БД
+        :param user_id: id пользователя
+        :param room_id: id комнаты
+        :param date_from: дата бронирования 'с'
+        :param date_to: дата бронирования 'по'
+        :return: новое бронирование
+        """
         try:
             add_booking_query = (
                 insert(Booking)
@@ -45,13 +55,26 @@ class BookingDAO(BaseDAO):
 
     @classmethod
     async def get_room_price(cls, session: AsyncSession, room_id: int) -> int:
+        """
+        Получение цены аренды комнаты за сутки.
+        :param session: async сессия БД
+        :param room_id: id комнаты
+        :return: цена комнаты
+        """
         get_room_price_query = select(Room.price).filter_by(id=room_id)
         room_price = await session.execute(get_room_price_query)
         return room_price.scalar()
 
     @classmethod
     async def get_free_rooms(cls, session: AsyncSession, room_id: int, date_from: date, date_to: date) -> int:
-        """"""
+        """
+        Получение свободных комнат по id комнаты в указанные даты
+        :param session: async сессия БД
+        :param room_id: id комнаты
+        :param date_from: дата бронирования 'с'
+        :param date_to: дата бронирования 'по'
+        :return: количество свободных комнат
+        """
         """
         WITH booked_rooms AS (
             SELECT * FROM bookings

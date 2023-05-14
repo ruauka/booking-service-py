@@ -3,6 +3,9 @@ from sqlalchemy import Column, Integer, String, ARRAY
 
 
 class Hotel(Base):
+    """
+    Модель гостиницы.
+    """
     name = Column(String, nullable=False)
     location = Column(String, nullable=False)
     services = Column(ARRAY(String(255)))
@@ -24,6 +27,10 @@ class Hotel(Base):
         return str(self)
 
     def todict(self):
+        """
+        Приведение модели к словарю.
+        :return: словарь из некоторых полей модели
+        """
         return {
             "id": self.id,
             "name": self.name,

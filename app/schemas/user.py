@@ -3,10 +3,18 @@ from pydantic import BaseModel, EmailStr
 
 
 class UserRequest(BaseModel):
+    """
+    Валидационная схема входящего запроса полей обновления пользователя.
+    """
     email: EmailStr
     password: str
 
-    def encode(self, pass_hash: str) -> dict[str, str]:
+    def hash_pass_replace(self, pass_hash: str) -> dict[str, str]:
+        """
+        Изменение навзвания поля входящего пароля для корректного маппинга с моделью.
+        :param pass_hash: хэш пароля
+        :return: словарь данных пользователя
+        """
         self.password = pass_hash
         return {
             "email": self.email,
@@ -15,16 +23,27 @@ class UserRequest(BaseModel):
 
 
 class UserUpdateRequest(BaseModel):
+    """
+     Валидационная схема входящего запроса полей обновления пользователя.
+    """
     email: Optional[EmailStr]
     password: Optional[str]
 
     def is_empty(self) -> bool:
+        """
+        Проверка на пустые поля.
+        :return: bool
+        """
         return not any(vars(self).values())
 
 
 class UserResponse(BaseModel):
+    """
+    Валидационная схема исходящего запроса полей пользователя.
+    """
     id: str
     email: EmailStr
 
+    # парсинг ответа sqlalchemy в pydantic
     class Config:
         orm_mode = True

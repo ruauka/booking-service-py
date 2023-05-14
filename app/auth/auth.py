@@ -9,18 +9,37 @@ from app.models.user import User
 from app.storage.user import UserDAO
 from config import cfg
 
+# хэш-движок
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def get_password_hash(password: str) -> str:
+    """
+    Хэширование пароля.
+    :param password: пароль пользователя
+    :return: хешированный пароль
+    """
     return pwd_context.hash(password)
 
 
 def verify_password(plain_password, hashed_password) -> bool:
+    """
+    Проверка на идентичность хэшированного пароля из БД и пароля введенного пользователем.
+    :param plain_password: пароль пользователя
+    :param hashed_password: хэшированный пароль из БД
+    :return: bool
+    """
     return pwd_context.verify(plain_password, hashed_password)
 
 
 async def verify_user(session: AsyncSession, email: EmailStr, password: str) -> Optional[User]:
+    """
+    Аутентификация пользователя.
+    :param session: async сессия БД
+    :param email: email пользователя
+    :param password: пароль пользователя
+    :return: объект пользователя
+    """
     user = await UserDAO.get_one(session, email=email)
     if not (user and verify_password(password, user.hashed_password)):
         return None
@@ -28,7 +47,12 @@ async def verify_user(session: AsyncSession, email: EmailStr, password: str) -> 
     return user
 
 
-def create_access_token(data: dict) -> str:
+def create_JWT_token(data: dict) -> str:
+    """
+    Создание JWT-токена.
+    :param data: словарь с id пользователя - {"sub": str(user.id)}
+    :return: JWT-токен
+    """
     to_encode = data.copy()
 
     expire = datetime.utcnow() + timedelta(hours=24)

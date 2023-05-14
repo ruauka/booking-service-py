@@ -11,17 +11,23 @@ engine = create_async_engine(cfg.db_url)
 async_session_maker = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 
-# асинсхронная сессия для бд
 async def get_session() -> Generator:
+    """
+    Асинхронный генератор сессий соединений с БД.
+    :return: асинхронная сессия
+    """
     async with async_session_maker() as session:
         yield session
 
 
-# аккумулирует в себе данные по моделям для миграций alembic
 class Base(DeclarativeBase):
+    """
+    Аккумулирует в себе данные по моделям для миграций alembic
+    """
 
     @declared_attr
     def __tablename__(cls):
         return f"{cls.__name__.lower()}s"
 
+    # одинаковые поля венесенные из всех моделей
     id = Column(Integer, primary_key=True)

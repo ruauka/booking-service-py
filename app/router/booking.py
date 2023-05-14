@@ -2,7 +2,6 @@ from datetime import date
 from typing import List, Any
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-from pydantic import parse_obj_as
 
 from app.auth.dependencies import auth_user
 from app.errors import NoBookingsErr, NoAvailableRoomsErr, BookingNotFoundErr, EmptyFieldsToUpdateErr
@@ -12,6 +11,7 @@ from app.storage.booking import BookingDAO
 from app.storage.database import get_session
 from app.utils import set_new_fields
 
+# регистрация роута бронирования
 router = APIRouter(
     prefix="/bookings",
     tags=["Bookings"],
@@ -26,7 +26,18 @@ async def add_booking(
         user: User = Depends(auth_user),
         session: AsyncSession = Depends(get_session),
 ) -> BookingResponse:
+    """
+    Создание нового бронирования комнаты по ее id.
+    :param room_id: id комнаты
+    :param date_from: дата бронирования 'с'
+    :param date_to: дата бронирования 'по'
+    :param user: пользователь из БД, полученный после авторизации
+    :param session: async сессия БД
+    :return: новое бронирование
+    """
+    # получение свободных комнат по id комнаты в указанные даты
     free_rooms = await BookingDAO.get_free_rooms(session, room_id, date_from, date_to)
+    # проверка на свободные комнаты
     if free_rooms <= 0:
         raise NoAvailableRoomsErr
 
@@ -39,6 +50,14 @@ async def get_booking_by_id(
         user: User = Depends(auth_user),
         session: AsyncSession = Depends(get_session),
 ) -> BookingResponse:
+    """
+    Требуется авторизация.
+    Получение бронирования по id.
+    :param booking_id: id бронирования
+    :param user: пользователь из БД, полученный после авторизации
+    :param session: async сессия БД
+    :return: бронирование. http response
+    """
     booking = await BookingDAO.get_one(session, id=booking_id, user_id=user.id)
     if not booking:
         raise BookingNotFoundErr
@@ -51,6 +70,13 @@ async def get_all_bookings_by_user(
         user: User = Depends(auth_user),
         session: AsyncSession = Depends(get_session),
 ) -> list[BookingResponse]:
+    """
+    Требуется авторизация.
+    Получение всех бронирований пользователя.
+    :param user: пользователь из БД, полученный после авторизации
+    :param session: async сессия БД
+    :return: список бронирований. http response
+    """
     bookings = await BookingDAO.get_all(session, user_id=user.id)
     if len(bookings) == 0:
         raise NoBookingsErr
@@ -65,6 +91,15 @@ async def update_booking_by_id(
         user: User = Depends(auth_user),
         session: AsyncSession = Depends(get_session),
 ) -> BookingResponse:
+    """
+    Требуется авторизация.
+    Изменение бронирования пользователя по id.
+    :param booking_id: id бронирования
+    :param new_fields: новые поля
+    :param user: пользователь из БД, полученный после авторизации
+    :param session: async сессия БД
+    :return: измененное бронирование. http response
+    """
     # проверка на полностью пустые поля
     if new_fields.is_empty():
         raise EmptyFieldsToUpdateErr
@@ -75,12 +110,14 @@ async def update_booking_by_id(
 
     # установка новых значений полей
     updated_fields: dict[str, Any] = set_new_fields(booking, new_fields)
+    # получение свободных комнат по id комнаты в указанные даты
     free_rooms = await BookingDAO.get_free_rooms(
         session,
         room_id=updated_fields.get("room_id"),
         date_from=updated_fields.get("date_from"),
         date_to=updated_fields.get("date_to")
     )
+    # проверка на свободные комнаты
     if free_rooms <= 0:
         raise NoAvailableRoomsErr
 
@@ -93,6 +130,14 @@ async def delete_booking_by_id(
         user: User = Depends(auth_user),
         session: AsyncSession = Depends(get_session),
 ) -> BookingResponse:
+    """
+    Требуется авторизация.
+    Удаление бронирования пользователя по id.
+    :param booking_id: id бронирования
+    :param user: пользователь из БД, полученный после авторизации
+    :param session: async сессия БД
+    :return: удаленное бронирование
+    """
     booking = await BookingDAO.get_one(session, user_id=user.id, id=booking_id)
     if not booking:
         raise BookingNotFoundErr

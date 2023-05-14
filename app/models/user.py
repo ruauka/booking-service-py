@@ -3,6 +3,9 @@ from app.storage.database import Base
 
 
 class User(Base):
+    """
+    Модель пользователя.
+    """
     email = Column(String, nullable=False, unique=True)
     hashed_password = Column(String, nullable=False)
 

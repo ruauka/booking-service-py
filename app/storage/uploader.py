@@ -7,6 +7,12 @@ from app.errors import UnknownErr
 
 
 async def upload_sql_queries(session: AsyncSession, queries: list[str]) -> None:
+    """
+    Загрузка в БД sql-запросов.
+    :param session: async сессия БД
+    :param queries: список из sql-запросов
+    :return: None
+    """
     try:
         for query in queries:
             await session.execute(text(query))

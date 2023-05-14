@@ -5,6 +5,12 @@ from app.schemas.user import UserUpdateRequest
 
 
 def set_user_new_fields(user, new_fields: UserUpdateRequest) -> dict[str, Any]:
+    """
+    Установка новых значений полей пользователя. Функция только для модели пользователя.
+    :param user: пользователь
+    :param new_fields: новые поля
+    :return: словарь из обновленных полей
+    """
     for key, value in new_fields:
         if not value:
             continue
@@ -22,6 +28,12 @@ def set_user_new_fields(user, new_fields: UserUpdateRequest) -> dict[str, Any]:
 
 
 def set_new_fields(instance, new_fields) -> dict[str, Any]:
+    """
+    Установка новых значений полей моделей.
+    :param instance: модель
+    :param new_fields: новые поля
+    :return: словарь из обновленных полей
+    """
     for key, value in new_fields:
         if not value:
             continue

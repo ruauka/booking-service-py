@@ -1,5 +1,4 @@
 from typing import Dict, Optional
-
 from fastapi import Depends, Request
 from jose import jwt, JWTError, ExpiredSignatureError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -12,6 +11,11 @@ from config import cfg
 
 
 def get_token(request: Request) -> Optional[str]:
+    """
+    Получение JWT-токена из куки.
+    :param request: входящий запроса
+    :return: JWT-токен
+    """
     token = request.cookies.get("access_token")
     if not token:
         raise TokenAbsentErr
@@ -20,6 +24,11 @@ def get_token(request: Request) -> Optional[str]:
 
 
 def check_token(token: str = Depends(get_token)) -> Optional[dict]:
+    """
+    Проверка на валидность JWT-токена.
+    :param token: JWT-токен
+    :return: словарь с id пользователя {"sub": user.id}
+    """
     try:
         # expire проверяется jwt.decode
         payload = jwt.decode(
@@ -37,6 +46,12 @@ async def auth_user(
         session: AsyncSession = Depends(get_session),
         payload: Dict = Depends(check_token),
 ) -> User:
+    """
+    Авторизация пользователя.
+    :param session: async сессия БД
+    :param payload: словарь с id пользователя {"sub": user.id}
+    :return: пользователь из БД
+    """
     user_id: str = payload.get("sub")
     if not user_id:
         raise UnauthorizedUserErr
@@ -46,7 +61,6 @@ async def auth_user(
         raise UnauthorizedUserErr
 
     return user
-
 
 # async def is_admin(user: User = Depends(auth_user)) -> User:
 #     if user.role != "admin":
