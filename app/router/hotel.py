@@ -1,8 +1,10 @@
-from typing import Any
-from fastapi import APIRouter, Depends
+from typing import Any, List
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
+from datetime import date, datetime, timedelta
 
-from app.errors import HotelAlreadyExistsErr, HotelNotFoundErr, NoHotelsErr, EmptyFieldsToUpdateErr
+from app.errors import HotelAlreadyExistsErr, HotelNotFoundErr, NoHotelsErr, EmptyFieldsToUpdateErr, \
+    DateFromAfterDateToErr, LongPeriodBookingErr
 from app.models.hotel import Hotel
 from app.schemas.hotel import HotelRequest, HotelResponse, HotelUpdateRequest
 from app.storage.database import get_session
@@ -55,7 +57,7 @@ async def get_hotel_by_id(
 @router.get("")
 async def get_all_hotels(
         session: AsyncSession = Depends(get_session),
-) -> list[HotelResponse]:
+) -> List[HotelResponse]:
     """
     Получение всех гостиниц.
     :param session: async сессия БД
@@ -110,3 +112,26 @@ async def delete_hotel_by_id(
         raise HotelNotFoundErr
 
     return await HotelDAO.delete(session, hotel_id)
+
+
+@router.get("/{location}")
+async def get_hotels_by_location(
+        location: str,
+        date_from: date = Query(..., description=f"Например, {datetime.now().date()}"),
+        date_to: date = Query(..., description=f"Например, {(datetime.now() + timedelta(days=14)).date()}"),
+        session: AsyncSession = Depends(get_session),
+) -> List[HotelResponse]:
+    """
+    Получение списока отелей по заданным параметрам, причем в отеле должен быть минимум 1 свободный номер.
+    :param location: местонахождение гостиницы
+    :param date_from: дата бронирования 'с'
+    :param date_to: дата бронирования 'по'
+    :param session: session: async сессия БД
+    :return: список гостиниц. http response
+    """
+    if date_from > date_to:
+        raise DateFromAfterDateToErr
+    if (date_to - date_from).days > 31:
+        raise LongPeriodBookingErr
+
+    return await HotelDAO.get_hotels_by_location(session, location, date_from, date_to)

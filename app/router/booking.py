@@ -1,6 +1,6 @@
-from datetime import date
+from datetime import date, datetime, timedelta
 from typing import List, Any
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.dependencies import auth_user
@@ -21,8 +21,8 @@ router = APIRouter(
 @router.post("", status_code=201)
 async def add_booking(
         room_id: int,
-        date_from: date,
-        date_to: date,
+        date_from: date = Query(..., description=f"Например, {datetime.now().date()}"),
+        date_to: date = Query(..., description=f"Например, {(datetime.now() + timedelta(days=14)).date()}"),
         user: User = Depends(auth_user),
         session: AsyncSession = Depends(get_session),
 ) -> BookingResponse:
@@ -69,7 +69,7 @@ async def get_booking_by_id(
 async def get_all_bookings_by_user(
         user: User = Depends(auth_user),
         session: AsyncSession = Depends(get_session),
-) -> list[BookingResponse]:
+) -> List[BookingResponse]:
     """
     Требуется авторизация.
     Получение всех бронирований пользователя.

@@ -40,6 +40,16 @@ NoHotelsErr = HTTPException(
     detail="No hotels yet",
 )
 
+DateFromAfterDateToErr = HTTPException(
+    status_code=status.HTTP_400_BAD_REQUEST,
+    detail="Field 'date from' can't be after 'date to'",
+)
+
+LongPeriodBookingErr = HTTPException(
+    status_code=status.HTTP_400_BAD_REQUEST,
+    detail="Booking time is too long, maximum 31 days",
+)
+
 RoomAlreadyExistsErr = HTTPException(
     status_code=status.HTTP_400_BAD_REQUEST,
     detail="Room already exists",
