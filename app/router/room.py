@@ -1,49 +1,59 @@
-from typing import Any
+from typing import Any, List
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.errors import EmptyFieldsToUpdateErr, RoomAlreadyExistsErr, RoomNotFoundErr, NoRoomsErr
+from app.errors import EmptyFieldsToUpdateErr, RoomAlreadyExistsErr, RoomNotFoundErr, NoRoomsErr, HotelNotFoundErr
+from app.models.room import Room
 from app.schemas.room import RoomRequest, RoomResponse, RoomUpdateRequest
 from app.storage.database import get_session
+from app.storage.hotel import HotelDAO
 from app.storage.room import RoomDAO
 from app.utils import set_new_fields
 
 # регистрация роута комнат
 router = APIRouter(
-    prefix="/rooms",
+    prefix="/hotels",
     tags=["Rooms"],
 )
 
 
-@router.post("", status_code=201)
+@router.post("/{hotel_id}/rooms", status_code=201)
 async def add_room(
+        hotel_id: int,
         room: RoomRequest,
         session: AsyncSession = Depends(get_session),
 ) -> RoomResponse:
     """
-    Создание комнаты.
-    :param room: комната - входящий JSON
+    Создание номера.
+    :param hotel_id: id гостиницы
+    :param room: номер - входящий JSON
     :param session: async сессия БД
-    :return: новая комната. http response
+    :return: новый номер. http response
     """
     room_exist = await RoomDAO.get_one(session, name=room.name)
     if room_exist:
         raise RoomAlreadyExistsErr
 
-    return await RoomDAO.add(session, room.dict())
+    return await RoomDAO.add(session, Room.add_id(hotel_id, room))
 
 
-@router.get("/{room_id}")
+@router.get("/{hotel_id}/rooms/{room_id}")
 async def get_room_by_id(
         room_id: int,
+        hotel_id: int,
         session: AsyncSession = Depends(get_session),
 ) -> RoomResponse:
     """
-    Получение комнаты по id.
-    :param room_id: id комнаты
+    Получение номера по id.
+    :param hotel_id: id гостиницы
+    :param room_id: id номера
     :param session: async сессия БД
-    :return: комната. http response
+    :return: номера. http response
     """
+    hotel = await HotelDAO.get_one(session, id=hotel_id)
+    if not hotel:
+        raise HotelNotFoundErr
+
     room = await RoomDAO.get_one(session, id=room_id)
     if not room:
         raise RoomNotFoundErr
@@ -51,35 +61,47 @@ async def get_room_by_id(
     return room
 
 
-@router.get("")
-async def get_all_rooms(
+@router.get("/{hotel_id}/rooms")
+async def get_all_rooms_by_hotel(
+        hotel_id: int,
         session: AsyncSession = Depends(get_session),
-) -> list[RoomResponse]:
+) -> List[RoomResponse]:
     """
-    Получение всех комнат.
+    Получение всех номеров гостиницы.
+    :param hotel_id: id гостиницы
     :param session: async сессия БД
-    :return: список комнат. http response
+    :return: список номеров. http response
     """
-    rooms = await RoomDAO.get_all(session)
+    hotel = await HotelDAO.get_one(session, id=hotel_id)
+    if not hotel:
+        raise HotelNotFoundErr
+
+    rooms = await RoomDAO.get_all(session, hotel_id=hotel_id)
     if len(rooms) == 0:
         raise NoRoomsErr
 
     return rooms
 
 
-@router.put("/{room_id}")
+@router.put("/{hotel_id}/rooms/{room_id}")
 async def update_room_by_id(
         room_id: int,
+        hotel_id: int,
         new_fields: RoomUpdateRequest,
         session: AsyncSession = Depends(get_session),
 ) -> RoomResponse:
     """
-    Изменение комнаты по id.
-    :param room_id: id комнаты
+    Изменение номера по id.
+    :param hotel_id: id гостиницы
+    :param room_id: id номера
     :param new_fields: новые поля
     :param session: async сессия БД
-    :return: измененная комната. http response
+    :return: измененный номер. http response
     """
+    hotel = await HotelDAO.get_one(session, id=hotel_id)
+    if not hotel:
+        raise HotelNotFoundErr
+
     # проверка на полностью пустые поля
     if new_fields.is_empty():
         raise EmptyFieldsToUpdateErr
@@ -93,17 +115,23 @@ async def update_room_by_id(
     return await RoomDAO.update(session, updated_fields, room_id)
 
 
-@router.delete("/{room_id}")
+@router.delete("/{hotel_id}/rooms/{room_id}")
 async def delete_room_by_id(
+        hotel_id: int,
         room_id: int,
         session: AsyncSession = Depends(get_session),
 ) -> RoomResponse:
     """
     Удаление комнаты по id.
+    :param hotel_id: id гостиницы
     :param room_id: id комнаты
     :param session: async сессия БД
     :return: удаленная гостиница. http response
     """
+    hotel = await HotelDAO.get_one(session, id=hotel_id)
+    if not hotel:
+        raise HotelNotFoundErr
+
     room = await RoomDAO.get_one(session, id=room_id)
     if not room:
         raise RoomNotFoundErr

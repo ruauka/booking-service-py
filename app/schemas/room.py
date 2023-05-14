@@ -4,9 +4,8 @@ from pydantic import BaseModel, Json
 
 class RoomRequest(BaseModel):
     """
-    Валидационная схема входящего запроса полей комнаты.
+    Валидационная схема входящего запроса полей номера.
     """
-    hotel_id: int
     name: str
     description: str
     price: int
@@ -17,9 +16,8 @@ class RoomRequest(BaseModel):
 
 class RoomUpdateRequest(BaseModel):
     """
-    Валидационная схема входящего запроса полей обновления комнаты.
+    Валидационная схема входящего запроса полей обновления номера.
     """
-    hotel_id: Optional[int]
     name: Optional[str]
     description: Optional[str]
     price: Optional[int]
@@ -37,11 +35,12 @@ class RoomUpdateRequest(BaseModel):
 
 class RoomResponse(BaseModel):
     """
-    Валидационная схема исходящего запроса полей комнаты.
+    Валидационная схема исходящего запроса полей номера.
     """
     id: str
     name: str
     description: str
+    quantity: int
 
     # парсинг ответа sqlalchemy в pydantic
     class Config:

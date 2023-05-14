@@ -4,10 +4,14 @@ from jose import jwt
 from datetime import datetime, timedelta
 from pydantic import EmailStr
 from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi.security import HTTPBearer
 
 from app.models.user import User
 from app.storage.user import UserDAO
 from config import cfg
+
+
+security = HTTPBearer()
 
 # хэш-движок
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

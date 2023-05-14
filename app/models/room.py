@@ -44,3 +44,15 @@ class Room(Base):
             "quantity": self.quantity,
             "image_id": self.image_id,
         }
+
+    @classmethod
+    def add_id(cls, hotel_id, room):
+        return {
+            "hotel_id": hotel_id,
+            "name": room.name,
+            "description": room.description,
+            "price": room.price,
+            "services": room.services,
+            "quantity": room.quantity,
+            "image_id": room.image_id,
+        }
