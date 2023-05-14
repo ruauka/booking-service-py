@@ -41,3 +41,14 @@ class HotelResponse(BaseModel):
     # парсинг ответа sqlalchemy в pydantic
     class Config:
         orm_mode = True
+
+
+class HotelByLocationResponse(HotelResponse):
+    """
+    Валидационная схема исходящего запроса полей гостиницы с полем rooms_left.
+    """
+    rooms_left: int
+
+    # парсинг ответа sqlalchemy в pydantic
+    class Config:
+        orm_mode = True
