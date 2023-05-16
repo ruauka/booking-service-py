@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, Depends, Response, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from pydantic import parse_obj_as
 
@@ -80,3 +80,16 @@ async def current_login_user(user: User = Depends(auth_user)) -> UserResponse:
     """
     # return user
     return parse_obj_as(UserResponse, user)
+
+# from fastapi.security import HTTPBearer
+#
+# security = HTTPBearer()
+#
+#
+# @app.get('/')
+# def main(authorization=Depends(security)):
+#     return authorization.credentials
+
+# https://stackoverflow.com/questions/62994795/how-to-secure-fastapi-api-endpoint-with-jwt-token-based-authorization
+
+# https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/

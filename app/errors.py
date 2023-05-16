@@ -65,6 +65,11 @@ NoRoomsErr = HTTPException(
     detail="No rooms yet",
 )
 
+NoRoomsOnPeriodErr = HTTPException(
+    status_code=status.HTTP_400_BAD_REQUEST,
+    detail="No rooms on that period",
+)
+
 NoAvailableRoomsErr = HTTPException(
     status_code=status.HTTP_400_BAD_REQUEST,
     detail="No rooms available for these dates",

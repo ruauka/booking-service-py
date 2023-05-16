@@ -1,8 +1,10 @@
 from typing import Any, List
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
+from datetime import date, datetime, timedelta
 
-from app.errors import EmptyFieldsToUpdateErr, RoomAlreadyExistsErr, RoomNotFoundErr, NoRoomsErr, HotelNotFoundErr
+from app.errors import EmptyFieldsToUpdateErr, RoomAlreadyExistsErr, RoomNotFoundErr, NoRoomsErr, HotelNotFoundErr, \
+    NoRoomsOnPeriodErr
 from app.models.room import Room
 from app.schemas.room import RoomRequest, RoomResponse, RoomUpdateRequest
 from app.storage.database import get_session
@@ -15,6 +17,28 @@ router = APIRouter(
     prefix="/hotels",
     tags=["Rooms"],
 )
+
+
+@router.get("/{hotel_id}/rooms/free")
+async def get_rooms_by_time(
+        hotel_id: int,
+        date_from: date = Query(..., description=f"Например, {datetime.now().date()}"),
+        date_to: date = Query(..., description=f"Например, {(datetime.now() + timedelta(days=14)).date()}"),
+        session: AsyncSession = Depends(get_session),
+) -> List[RoomResponse]:
+    """
+    Получение списока всех свободных для бронирования номеров определенной гостиницы.
+    :param hotel_id: id гостиницы
+    :param date_from: дата бронирования 'с'
+    :param date_to: дата бронирования 'по'
+    :param session: session: async сессия БД
+    :return: список номеров
+    """
+    rooms = await RoomDAO.get_rooms_by_time(session, hotel_id, date_from, date_to)
+    if len(rooms) == 0:
+        raise NoRoomsOnPeriodErr
+
+    return rooms
 
 
 @router.post("/{hotel_id}/rooms", status_code=201)
