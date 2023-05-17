@@ -37,6 +37,7 @@ class HotelResponse(BaseModel):
     """
     id: str
     name: str
+    location: str
 
     # парсинг ответа sqlalchemy в pydantic
     class Config:

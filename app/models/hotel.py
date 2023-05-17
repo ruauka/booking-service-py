@@ -10,7 +10,7 @@ class Hotel(Base):
     location = Column(String, nullable=False)
     services = Column(ARRAY(String(255)))
     rooms_quantity = Column(Integer, nullable=False)
-    image_id = Column(Integer)
+    image_id = Column(Integer, unique=True)
 
     def __str__(self):
         return (

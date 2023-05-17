@@ -1,3 +1,4 @@
+import shutil
 import sqlparse
 from fastapi import APIRouter, Depends, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -29,3 +30,18 @@ async def upload_from_sql_file(file: UploadFile, session: AsyncSession = Depends
     )
     await upload_sql_queries(session, queries)
     return "sql scripts loaded successfully"
+
+
+@router.post("/image/hotel")
+async def add_hotel_image(name: int, file: UploadFile):
+    """
+    Хендлер загрузки в проект фото гостиниц.
+    :param name: id фото
+    :param file: файл
+    :return: информационное сообщение
+    """
+    static_path = f"app/frontend/static/images/hotels/{name}.webp"
+    with open(static_path, "wb+") as file_object:
+        # Сохраняем файл в локальное хранилище
+        shutil.copyfileobj(file.file, file_object)
+    return "file loaded successfully"
