@@ -7,8 +7,6 @@ class Cfg(BaseSettings):
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
     POSTGRES_DB: str
-    SECRET_KEY: str
-    ALGORITHM: str
 
     @property
     def db_url(self) -> str:
@@ -19,6 +17,9 @@ class Cfg(BaseSettings):
                f"{self.DB_PORT}/" \
                f"{self.POSTGRES_DB}"
 
+    SECRET_KEY: str
+    ALGORITHM: str
+
     @property
     def secret_key(self) -> str:
         return self.SECRET_KEY
@@ -26,6 +27,13 @@ class Cfg(BaseSettings):
     @property
     def sha_algorithm(self) -> str:
         return self.ALGORITHM
+
+    REDIS_HOST: str
+    REDIS_PORT: int
+
+    @property
+    def redis_url(self):
+        return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}"
 
     class Config:
         env_file = "creds.env"

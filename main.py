@@ -2,7 +2,11 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
+from redis import asyncio as aioredis
 
+from config import cfg
 from app.router.auth import router as auth_router
 from app.router.user import router as user_router
 from app.router.hotel import router as hotel_router
@@ -12,15 +16,15 @@ from app.router.booking import router as booking_router
 from app.router.pages import router as pages_router
 
 app = FastAPI()
+
 # монтирование папки static
 app.mount("/frontend/static", StaticFiles(directory="app/frontend/static"), "static")
-
 # Подключение CORS, чтобы запросы к API могли приходить из браузера
 origins = [
     # 3000 - порт, на котором работает фронтенд на React.js
     "http://localhost:3000",  # https://mysite.cpm
 ]
-
+# параметры CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -30,6 +34,19 @@ app.add_middleware(
                    "Access-Control-Allow-Origin",
                    "Authorization"],
 )
+
+
+# startup, shutdown - события fastapi
+@app.on_event("startup")
+async def startup():
+    """
+    Коннект с redis.
+    redis-cli
+    keys *
+    """
+    redis = aioredis.from_url(cfg.redis_url, encoding="utf8", decode_responses=True)
+    FastAPICache.init(RedisBackend(redis), prefix="booking-cache")
+
 
 app.include_router(auth_router)
 app.include_router(uploader_router)

@@ -1,7 +1,9 @@
+import asyncio
 from typing import Any, List
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import date, datetime, timedelta
+from fastapi_cache.decorator import cache
 
 from app.errors import HotelAlreadyExistsErr, HotelNotFoundErr, NoHotelsErr, EmptyFieldsToUpdateErr, \
     DateFromAfterDateToErr, LongPeriodBookingErr
@@ -19,6 +21,7 @@ router = APIRouter(
 
 
 @router.get("/location")
+# @cache(expire=60)
 async def get_hotels_by_location(
         location: str,
         date_from: date = Query(..., description=f"Например, {datetime.now().date()}"),
@@ -33,6 +36,7 @@ async def get_hotels_by_location(
     :param session: session: async сессия БД
     :return: список гостиниц. http response. Выходная валидация через HotelByLocationResponse
     """
+    # await asyncio.sleep(3)
     if date_from > date_to:
         raise DateFromAfterDateToErr
     if (date_to - date_from).days > 31:

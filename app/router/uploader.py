@@ -9,7 +9,7 @@ from app.storage.uploader import upload_sql_queries
 # регистрация роута загрузчика
 router = APIRouter(
     prefix="/upload",
-    tags=["DB Upload"],
+    tags=["Uploader"],
 )
 
 
@@ -35,7 +35,7 @@ async def upload_from_sql_file(file: UploadFile, session: AsyncSession = Depends
 @router.post("/image/hotel")
 async def add_hotel_image(name: int, file: UploadFile):
     """
-    Хендлер загрузки в проект фото гостиниц.
+    Хендлер загрузки в проект фото гостиниц, форматы: JPEG, PNG, WEBP.
     :param name: id фото
     :param file: файл
     :return: информационное сообщение
