@@ -98,9 +98,20 @@ TokenAbsentErr = HTTPException(
 IncorrectJWTFormatErr = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
     detail="Incorrect JWT Format",
+    headers={"WWW-Authenticate": "Bearer"},
 )
 
-UnauthorizedUserErr = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+UnauthorizedUserErr = HTTPException(
+    status_code=status.HTTP_401_UNAUTHORIZED,
+    detail="Unauthorized user",
+    headers={"WWW-Authenticate": "Bearer"},
+)
+
+UnknownJWTPareErr = HTTPException(
+    status_code=status.HTTP_401_UNAUTHORIZED,
+    detail="Unable to parse JWT token",
+    headers={"WWW-Authenticate": "Bearer"},
+)
 
 EmptyFieldsToUpdateErr = HTTPException(
     status_code=status.HTTP_400_BAD_REQUEST,

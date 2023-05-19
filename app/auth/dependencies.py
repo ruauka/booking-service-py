@@ -1,22 +1,28 @@
 from typing import Dict, Optional
-from fastapi import Depends, Request
+from fastapi import Depends
+from fastapi.security import HTTPBearer
 from jose import jwt, JWTError, ExpiredSignatureError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.errors import TokenAbsentErr, JWTExpiredErr, IncorrectJWTFormatErr, UnauthorizedUserErr, NoAdminErr
+from app.errors import TokenAbsentErr, JWTExpiredErr, IncorrectJWTFormatErr, UnauthorizedUserErr, NoAdminErr, \
+    UnknownJWTPareErr
 from app.models.user import User
 from app.storage.database import get_session
 from app.storage.user import UserDAO
 from config import cfg
 
+# движок авторизации
+security = HTTPBearer()
 
-def get_token(request: Request) -> Optional[str]:
+
+def get_token(authorization=Depends(security)) -> Optional[str]:
     """
     Получение JWT-токена из куки.
-    :param request: входящий запроса
+    :param authorization: авторизация. Используется хедер "Authorization"
     :return: JWT-токен
     """
-    token = request.cookies.get("access_token")
+    # token = request.cookies.get("access_token")
+    token = authorization.credentials
     if not token:
         raise TokenAbsentErr
 
@@ -38,6 +44,8 @@ def check_token(token: str = Depends(get_token)) -> Optional[dict]:
         raise JWTExpiredErr
     except JWTError:
         raise IncorrectJWTFormatErr
+    except Exception:
+        raise UnknownJWTPareErr
 
     return payload
 

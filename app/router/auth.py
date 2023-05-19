@@ -79,17 +79,5 @@ async def current_login_user(user: User = Depends(auth_user)) -> UserResponse:
     :return: пользователь JSON
     """
     # return user
+    # parse_obj_as - валидация, вместо -> UserResponse
     return parse_obj_as(UserResponse, user)
-
-# from fastapi.security import HTTPBearer
-#
-# security = HTTPBearer()
-#
-#
-# @app.get('/')
-# def main(authorization=Depends(security)):
-#     return authorization.credentials
-
-# https://stackoverflow.com/questions/62994795/how-to-secure-fastapi-api-endpoint-with-jwt-token-based-authorization
-
-# https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/

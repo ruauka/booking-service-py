@@ -4,7 +4,7 @@ services:
   database:
     image: postgres:latest
     container_name: database
-    restart: always
+#    restart: always
     env_file:
       - creds.env
     ports:
@@ -20,7 +20,7 @@ services:
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin
-    restart: always
+#    restart: always
     env_file:
       - creds.env
     volumes:
@@ -28,17 +28,17 @@ services:
     ports:
       - "5050:80"
 
-  redis:
-    image: "redis:latest"
-    container_name: redis
-    env_file:
-      - creds.env
-    volumes:
-      - redis:/data
-    ports:
-      - "6379:6379"
+#  redis:
+#    image: "redis:latest"
+#    container_name: redis
+#    env_file:
+#      - creds.env
+#    volumes:
+#      - redis:/data
+#    ports:
+#      - "6379:6379"
 
 volumes:
   db:
   pgadmin:
-  redis:
+#  redis:
