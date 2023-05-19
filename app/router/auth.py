@@ -55,7 +55,7 @@ async def login(
 
     token = create_JWT_token({"sub": str(user.id)})
     # response добавляет в ответ куку, возращать что то в ответе не требуется
-    response.set_cookie("access_token", token, httponly=True)
+    response.set_cookie("JWT", token, httponly=True)
     return {"JWT": token}
 
 
@@ -66,7 +66,7 @@ async def logout_user(response: Response) -> dict[str, str]:
     :param response: http ответ, из куки которого удаляется JWT-токен
     :return: информационное сообщение
     """
-    response.delete_cookie("access_token")
+    response.delete_cookie("JWT")
     return {"message": "logged out"}
 
 
