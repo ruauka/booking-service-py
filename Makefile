@@ -9,3 +9,6 @@ migrate_up:
 
 migrate_down:
 	alembic downgrade -1
+
+celery:
+	celery -A app.tasks.engine:celery worker --loglevel=INFO

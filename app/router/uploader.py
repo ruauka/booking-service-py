@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.storage.database import get_session
 from app.storage.uploader import upload_sql_queries
+from app.tasks.tasks import picture_compression
 
 # регистрация роута загрузчика
 router = APIRouter(
@@ -40,8 +41,10 @@ async def add_hotel_image(name: int, file: UploadFile):
     :param file: файл
     :return: информационное сообщение
     """
-    static_path = f"app/frontend/static/images/hotels/{name}.webp"
-    with open(static_path, "wb+") as file_object:
+    image_path = f"app/frontend/static/images/hotels/{name}.webp"
+    with open(image_path, "wb+") as file_object:
         # Сохраняем файл в локальное хранилище
         shutil.copyfileobj(file.file, file_object)
+    # фоновый вызов celery
+    picture_compression.delay(image_path)
     return "file loaded successfully"
