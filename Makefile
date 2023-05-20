@@ -12,3 +12,6 @@ migrate_down:
 
 celery:
 	celery -A app.tasks.engine:celery worker --loglevel=INFO
+
+flower:
+	celery -A app.tasks.engine:celery flower
