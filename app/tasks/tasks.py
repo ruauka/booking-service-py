@@ -1,9 +1,9 @@
 import smtplib
 from pathlib import Path
-
 from PIL import Image
 from pydantic import EmailStr
 
+from app.tasks.email_templates import create_booking_confirmation_template
 from config import cfg
 from app.tasks.engine import celery
 
@@ -23,3 +23,17 @@ def picture_compression(path: str):
     ]:
         resized_img = image.resize(size=(width, height))
         resized_img.save(f"app/frontend/static/images/hotels/resized/{width}_{height}_{image_path.name}")
+
+
+@celery.task
+def send_booking_confirmation_email(booking: dict, email_to: EmailStr):
+    """
+    Фоновая задача отправки подтверждения бронирования номера на почту пользователя.
+    :param booking: словарь из БД
+    :param email_to: почта пользователя
+    """
+    msg_content = create_booking_confirmation_template(booking, email_to)
+
+    with smtplib.SMTP_SSL(cfg.SMTP_HOST, cfg.SMTP_PORT) as server:
+        server.login(cfg.SMTP_GMAIL, cfg.SMTP_PASSWORD)
+        server.send_message(msg_content)

@@ -2,6 +2,7 @@ from datetime import date, datetime, timedelta
 from typing import List, Any
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
+from pydantic import parse_obj_as
 
 from app.auth.dependencies import auth_user
 from app.errors import NoBookingsErr, NoAvailableRoomsErr, BookingNotFoundErr, EmptyFieldsToUpdateErr
@@ -9,6 +10,7 @@ from app.models.user import User
 from app.schemas.booking import BookingResponse, BookingUpdateRequest
 from app.storage.booking import BookingDAO
 from app.storage.database import get_session
+from app.tasks.tasks import send_booking_confirmation_email
 from app.utils import set_new_fields
 
 # регистрация роута бронирования
@@ -25,7 +27,7 @@ async def add_booking(
         date_to: date = Query(..., description=f"Например, {(datetime.now() + timedelta(days=14)).date()}"),
         user: User = Depends(auth_user),
         session: AsyncSession = Depends(get_session),
-) -> BookingResponse:
+):
     """
     Создание нового бронирования комнаты по ее id.
     :param room_id: id комнаты
@@ -41,7 +43,13 @@ async def add_booking(
     if free_rooms <= 0:
         raise NoAvailableRoomsErr
 
-    return await BookingDAO.add(session, user.id, room_id, date_from, date_to)
+    booking = await BookingDAO.add(session, user.id, room_id, date_from, date_to)
+    # парсинг ответа алхимии в словарь для celery
+    booking_dict = parse_obj_as(BookingResponse, booking).dict()
+    # фоновый вызов celery
+    send_booking_confirmation_email.delay(booking_dict, user.email)
+    # выходная валидация не требуется, booking_dict провалидирован parse_obj_as()
+    return booking_dict
 
 
 @router.get("/{booking_id}")

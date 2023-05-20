@@ -1,7 +1,6 @@
 from typing import List, Any
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-from pydantic import parse_obj_as
 
 from app.errors import UserNotFoundErr, EmptyFieldsToUpdateErr, NoUsersErr
 from app.schemas.user import UserResponse, UserUpdateRequest

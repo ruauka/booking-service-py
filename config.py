@@ -35,6 +35,11 @@ class Cfg(BaseSettings):
     def redis_url(self):
         return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}"
 
+    SMTP_HOST: str
+    SMTP_PORT: int
+    SMTP_GMAIL: str
+    SMTP_PASSWORD: str
+
     class Config:
         env_file = "creds.env"
 
