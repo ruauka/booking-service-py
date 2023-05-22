@@ -6,7 +6,7 @@ from app.auth.auth import get_password_hash, verify_user, create_JWT_token
 from app.auth.dependencies import auth_user
 from app.errors import UserAlreadyExistsErr, IncorrectEmailOrPasswordErr
 from app.storage.database import get_session
-from app.schemas.user import UserRequest, UserResponse
+from app.schemas.user import UserRequest, UserResponse, UserLoginRequest
 from app.models.user import User
 from app.storage.user import UserDAO
 
@@ -38,7 +38,7 @@ async def register_user(
 
 @router.post("/login")
 async def login(
-        user: UserRequest,
+        user: UserLoginRequest,
         response: Response,
         session: AsyncSession = Depends(get_session)
 ) -> dict[str, str]:

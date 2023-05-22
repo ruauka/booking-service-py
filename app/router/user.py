@@ -2,6 +2,7 @@ from typing import List, Any
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.auth.dependencies import admin_check
 from app.errors import UserNotFoundErr, EmptyFieldsToUpdateErr, NoUsersErr
 from app.schemas.user import UserResponse, UserUpdateRequest
 from app.storage.database import get_session
@@ -53,10 +54,13 @@ async def get_all_users(
 async def update_user_by_id(
         user_id: int,
         new_fields: UserUpdateRequest,
+        _=Depends(admin_check),
         session: AsyncSession = Depends(get_session),
 ) -> UserResponse:
     """
+    Доступно под ролью - админ.
     Изменение пользователя по id.
+    :param _: проверка на роль 'админ'
     :param user_id: id пользователя
     :param new_fields: новые поля
     :param session: async сессия БД
@@ -78,10 +82,13 @@ async def update_user_by_id(
 @router.delete("/{user_id}")
 async def delete_user_by_id(
         user_id: int,
+        _=Depends(admin_check),
         session: AsyncSession = Depends(get_session),
 ) -> UserResponse:
     """
+    Доступно под ролью - админ.
     Удаление пользователя по id.
+    :param _: проверка на роль 'админ'
     :param user_id: id пользователя
     :param session: async сессия БД
     :return: удаленный пользователь. http response

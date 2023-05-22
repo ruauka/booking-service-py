@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String
+from sqlalchemy import Column, String, Boolean
 from sqlalchemy.orm import relationship
 
 from app.storage.database import Base
@@ -10,6 +10,7 @@ class User(Base):
     """
     email = Column(String, nullable=False, unique=True)
     hashed_password = Column(String, nullable=False)
+    admin = Column(Boolean, nullable=False, default=False, server_default="false")
 
     booking = relationship("Booking", back_populates="user")
 
@@ -22,4 +23,5 @@ class User(Base):
             f"id={self.id}, "
             f"email={self.email}, "
             f"hashed_password={self.hashed_password}, "
+            f"admin={self.admin}"
         )

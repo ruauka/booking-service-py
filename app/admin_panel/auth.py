@@ -7,6 +7,7 @@ from starlette.responses import RedirectResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.auth import verify_user, create_JWT_token
+from app.errors import NoAdminErr, UserNotFoundErr
 from app.storage.database import async_session_maker
 from app.storage.user import UserDAO
 from config import cfg
@@ -33,9 +34,13 @@ class AdminAuth(AuthenticationBackend):
             self.session = session
 
         user = await verify_user(self.session, EmailStr(email), password)
-        if user:
-            token = create_JWT_token({"sub": str(user.id)})
-            request.session.update({"token": token})
+        if not user:
+            raise UserNotFoundErr
+        if not user.admin:
+            raise NoAdminErr
+
+        token = create_JWT_token({"sub": str(user.id)})
+        request.session.update({"token": token})
 
         return True
 

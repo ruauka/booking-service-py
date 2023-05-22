@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import date, datetime, timedelta
 from fastapi_cache.decorator import cache
 
+from app.auth.dependencies import admin_check
 from app.errors import HotelAlreadyExistsErr, HotelNotFoundErr, NoHotelsErr, EmptyFieldsToUpdateErr, \
     DateFromAfterDateToErr, LongPeriodBookingErr
 from app.models.hotel import Hotel
@@ -21,7 +22,7 @@ router = APIRouter(
 
 
 @router.get("/location")
-# @cache(expire=60)
+@cache(expire=60)
 async def get_hotels_by_location(
         location: str,
         date_from: date = Query(..., description=f"Например, {datetime.now().date()}"),
@@ -48,10 +49,13 @@ async def get_hotels_by_location(
 @router.post("", status_code=201)
 async def add_hotel(
         hotel: HotelRequest,
+        _=Depends(admin_check),
         session: AsyncSession = Depends(get_session),
 ) -> HotelResponse:
     """
+    Доступно под ролью - админ.
     Создание гостинцы.
+    :param _: проверка на роль 'админ'
     :param hotel: гостиница - входящий JSON
     :param session: async сессия БД
     :return: новая гостиница. http response
@@ -101,10 +105,13 @@ async def get_all_hotels(
 async def update_hotel_by_id(
         hotel_id: int,
         new_fields: HotelUpdateRequest,
+        _=Depends(admin_check),
         session: AsyncSession = Depends(get_session),
 ) -> HotelResponse:
     """
+    Доступно под ролью - админ.
     Изменение гостиницы по id.
+    :param _: проверка на роль 'админ'
     :param hotel_id: id гостиницы
     :param new_fields: новые поля
     :param session: async сессия БД
@@ -126,10 +133,13 @@ async def update_hotel_by_id(
 @router.delete("/{hotel_id}")
 async def delete_hotel_by_id(
         hotel_id: int,
+        _=Depends(admin_check),
         session: AsyncSession = Depends(get_session),
 ) -> HotelResponse:
     """
+    Доступно под ролью - админ.
     Удаление гостиницы по id.
+    :param _: проверка на роль 'админ'
     :param hotel_id: id гостиницы
     :param session: async сессия БД
     :return: удаленная гостиница. http response

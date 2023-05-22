@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import date, datetime, timedelta
 
+from app.auth.dependencies import admin_check
 from app.errors import EmptyFieldsToUpdateErr, RoomAlreadyExistsErr, RoomNotFoundErr, NoRoomsErr, HotelNotFoundErr, \
     NoRoomsOnPeriodErr
 from app.models.room import Room
@@ -45,10 +46,13 @@ async def get_rooms_by_time(
 async def add_room(
         hotel_id: int,
         room: RoomRequest,
+        _=Depends(admin_check),
         session: AsyncSession = Depends(get_session),
 ) -> RoomResponse:
     """
+    Доступно под ролью - админ.
     Создание номера.
+    :param _: проверка на роль 'админ'
     :param hotel_id: id гостиницы
     :param room: номер - входящий JSON
     :param session: async сессия БД
@@ -112,10 +116,13 @@ async def update_room_by_id(
         room_id: int,
         hotel_id: int,
         new_fields: RoomUpdateRequest,
+        _=Depends(admin_check),
         session: AsyncSession = Depends(get_session),
 ) -> RoomResponse:
     """
+    Доступно под ролью - админ.
     Изменение номера по id.
+    :param _: проверка на роль 'админ'
     :param hotel_id: id гостиницы
     :param room_id: id номера
     :param new_fields: новые поля
@@ -143,10 +150,13 @@ async def update_room_by_id(
 async def delete_room_by_id(
         hotel_id: int,
         room_id: int,
+        _=Depends(admin_check),
         session: AsyncSession = Depends(get_session),
 ) -> RoomResponse:
     """
+    Доступно под ролью - админ.
     Удаление комнаты по id.
+    :param _: проверка на роль 'админ'
     :param hotel_id: id гостиницы
     :param room_id: id комнаты
     :param session: async сессия БД

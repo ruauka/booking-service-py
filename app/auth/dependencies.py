@@ -65,8 +65,11 @@ async def auth_user(
 
     return user
 
-# async def is_admin(user: User = Depends(auth_user)) -> User:
-#     if user.role != "admin":
-#         raise NoAdminErr
-#
-#     return user
+
+async def admin_check(user: User = Depends(auth_user)):
+    """
+    Проверка роли 'админ'.
+    :param user: Авторизованный пользователь.
+    """
+    if not user.admin:
+        raise NoAdminErr

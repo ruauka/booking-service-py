@@ -63,7 +63,6 @@ async def startup():
 
 # Подключение админки
 admin = Admin(app, engine, authentication_backend=authentication_backend)
-
 # регистрация вьюх админки
 admin.add_view(UserAdmin)
 admin.add_view(HotelAdmin)

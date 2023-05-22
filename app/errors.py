@@ -119,8 +119,8 @@ EmptyFieldsToUpdateErr = HTTPException(
 )
 
 NoAdminErr = HTTPException(
-    status_code=status.HTTP_400_BAD_REQUEST,
-    detail="Yuo'r not admin",
+    status_code=status.HTTP_401_UNAUTHORIZED,
+    detail="You'r not admin",
 )
 
 DBErr = HTTPException(

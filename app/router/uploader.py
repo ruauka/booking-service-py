@@ -3,6 +3,7 @@ import sqlparse
 from fastapi import APIRouter, Depends, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.auth.dependencies import admin_check
 from app.storage.database import get_session
 from app.storage.uploader import upload_sql_queries
 from app.tasks.tasks import picture_compression
@@ -15,9 +16,15 @@ router = APIRouter(
 
 
 @router.post("/sql")
-async def upload_from_sql_file(file: UploadFile, session: AsyncSession = Depends(get_session)):
+async def upload_from_sql_file(
+        file: UploadFile,
+        _=Depends(admin_check),
+        session: AsyncSession = Depends(get_session)
+):
     """
+    Доступно под ролью - админ.
     Хендлер загрузки в БД sql-файла.
+    :param _: проверка на роль 'админ'
     :param file: файл с sql запросами
     :param session: async сессия БД
     :return: информационное сообщение
@@ -34,9 +41,15 @@ async def upload_from_sql_file(file: UploadFile, session: AsyncSession = Depends
 
 
 @router.post("/image/hotel")
-async def add_hotel_image(name: int, file: UploadFile):
+async def add_hotel_image(
+        name: int,
+        file: UploadFile,
+        _=Depends(admin_check),
+):
     """
+    Доступно под ролью - админ.
     Хендлер загрузки в проект фото гостиниц, форматы: JPEG, PNG, WEBP.
+    :param _: проверка на роль 'админ'
     :param name: id фото
     :param file: файл
     :return: информационное сообщение
