@@ -5,7 +5,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
 from redis import asyncio as aioredis
+from sqladmin import Admin
 
+from app.admin_panel.auth import authentication_backend
+from app.admin_panel.views import UserAdmin, BookingAdmin, HotelAdmin, RoomAdmin
+from app.storage.database import engine
 from config import cfg
 from app.router.auth import router as auth_router
 from app.router.user import router as user_router
@@ -16,6 +20,15 @@ from app.router.booking import router as booking_router
 from app.router.pages import router as pages_router
 
 app = FastAPI()
+
+# регистрация хендлеров
+app.include_router(auth_router)
+app.include_router(uploader_router)
+app.include_router(user_router)
+app.include_router(hotel_router)
+app.include_router(room_router)
+app.include_router(booking_router)
+app.include_router(pages_router)
 
 # монтирование папки static
 app.mount("/frontend/static", StaticFiles(directory="app/frontend/static"), "static")
@@ -48,13 +61,14 @@ async def startup():
     FastAPICache.init(RedisBackend(redis), prefix="booking-cache")
 
 
-app.include_router(auth_router)
-app.include_router(uploader_router)
-app.include_router(user_router)
-app.include_router(hotel_router)
-app.include_router(room_router)
-app.include_router(booking_router)
-app.include_router(pages_router)
+# Подключение админки
+admin = Admin(app, engine, authentication_backend=authentication_backend)
+
+# регистрация вьюх админки
+admin.add_view(UserAdmin)
+admin.add_view(HotelAdmin)
+admin.add_view(RoomAdmin)
+admin.add_view(BookingAdmin)
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)

@@ -1,5 +1,7 @@
-from app.storage.database import Base
+from sqlalchemy.orm import relationship
 from sqlalchemy import Column, Integer, String, ARRAY
+
+from app.storage.database import Base
 
 
 class Hotel(Base):
@@ -12,7 +14,12 @@ class Hotel(Base):
     rooms_quantity = Column(Integer, nullable=False)
     image_id = Column(Integer, unique=True)
 
+    rooms = relationship("Room", back_populates="hotel")
+
     def __str__(self):
+        return f"Отель {self.name} {self.location[:30]}"
+
+    def __repr__(self):
         return (
             f"{self.__class__.__name__}, "
             f"id={self.id}, "
@@ -22,9 +29,6 @@ class Hotel(Base):
             f"rooms_quantity={self.rooms_quantity}, "
             f"image_id={self.image_id}, "
         )
-
-    def __repr__(self):
-        return str(self)
 
     def todict(self):
         """

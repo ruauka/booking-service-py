@@ -14,7 +14,7 @@ from config import cfg
 def get_token(request: Request) -> Optional[str]:
     """
     Получение JWT-токена из куки.
-    :param request: входящий запроса
+    :param request: входящий запрос
     :return: JWT-токен
     """
     token = request.cookies.get("JWT")

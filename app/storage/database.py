@@ -1,3 +1,4 @@
+from collections.abc import AsyncIterator
 from typing import Generator
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase, declared_attr
@@ -11,7 +12,7 @@ engine = create_async_engine(cfg.db_url)
 async_session_maker = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 
-async def get_session() -> Generator:
+async def get_session() -> AsyncIterator[AsyncSession]:
     """
     Асинхронный генератор сессий соединений с БД.
     :return: асинхронная сессия

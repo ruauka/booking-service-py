@@ -1,5 +1,7 @@
-from app.storage.database import Base
+from sqlalchemy.orm import relationship
 from sqlalchemy import Column, Integer, ForeignKey, Date, Computed
+
+from app.storage.database import Base
 
 
 class Booking(Base):
@@ -14,7 +16,13 @@ class Booking(Base):
     total_cost = Column(Integer, Computed("(date_to - date_from) * price"))
     total_days = Column(Integer, Computed("date_to - date_from"))
 
+    user = relationship("User", back_populates="booking")
+    room = relationship("Room", back_populates="booking")
+
     def __str__(self):
+        return f"Booking #{self.id}"
+
+    def __repr__(self):
         return (
             f"{self.__class__.__name__}, "
             f"id={self.id}, "
@@ -26,9 +34,6 @@ class Booking(Base):
             f"total_cost={self.total_cost}, "
             f"total_days={self.total_days}, "
         )
-
-    def __repr__(self):
-        return str(self)
 
     def todict(self):
         """
