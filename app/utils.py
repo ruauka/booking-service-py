@@ -13,7 +13,9 @@ def set_user_new_fields(user, new_fields: UserUpdateRequest) -> dict[str, Any]:
     """
     for key, value in new_fields:
         if not value:
-            continue
+            # проверка на bool поля
+            if not isinstance(value, bool):
+                continue
         if key == "password":
             key = "hashed_password"
             value = get_password_hash(value)
@@ -21,7 +23,8 @@ def set_user_new_fields(user, new_fields: UserUpdateRequest) -> dict[str, Any]:
 
     updated_fields = {
         "email": user.email,
-        "hashed_password": user.hashed_password
+        "hashed_password": user.hashed_password,
+        "admin": user.admin
     }
 
     return updated_fields

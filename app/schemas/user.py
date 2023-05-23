@@ -42,10 +42,14 @@ class UserUpdateRequest(BaseModel):
 
     def is_empty(self) -> bool:
         """
-        Проверка на пустые поля.
+        Проверка на пустые поля, включая bool.
         :return: bool
         """
-        return not any(vars(self).values())
+        for field_val in vars(self).values():
+            if field_val is not None:
+                return False
+
+        return True
 
 
 class UserResponse(BaseModel):
