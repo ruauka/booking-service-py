@@ -2,6 +2,9 @@ from pydantic import BaseSettings
 
 
 class Cfg(BaseSettings):
+    """
+    Конфигурация сервиса.
+    """
     DB_HOST: str
     DB_PORT: int
     POSTGRES_USER: str
@@ -10,6 +13,10 @@ class Cfg(BaseSettings):
 
     @property
     def db_url(self) -> str:
+        """
+        Путь подключения к PostgresSQL
+        :return: dsn
+        """
         return f"postgresql+asyncpg://" \
                f"{self.POSTGRES_USER}:" \
                f"{self.POSTGRES_PASSWORD}@" \
@@ -17,6 +24,7 @@ class Cfg(BaseSettings):
                f"{self.DB_PORT}/" \
                f"{self.POSTGRES_DB}"
 
+    # секреты для JWT
     SECRET_KEY: str
     ALGORITHM: str
 
@@ -41,6 +49,9 @@ class Cfg(BaseSettings):
     SMTP_PASSWORD: str
 
     class Config:
+        """
+        Парсинг конфиг файла.
+        """
         env_file = "creds.env"
 
 
