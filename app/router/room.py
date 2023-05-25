@@ -42,17 +42,15 @@ async def get_rooms_by_time(
     return rooms
 
 
-@router.post("/{hotel_id}/rooms", status_code=201)
+@router.post("/{hotel_id}/rooms", dependencies=[Depends(admin_check)], status_code=201)
 async def add_room(
         hotel_id: int,
         room: RoomRequest,
-        _=Depends(admin_check),
         session: AsyncSession = Depends(get_session),
 ) -> RoomResponse:
     """
     Доступно под ролью - админ.
     Создание номера.
-    :param _: проверка на роль 'админ'
     :param hotel_id: id гостиницы
     :param room: номер - входящий JSON
     :param session: async сессия БД
@@ -111,18 +109,16 @@ async def get_all_rooms_by_hotel(
     return rooms
 
 
-@router.put("/{hotel_id}/rooms/{room_id}")
+@router.put("/{hotel_id}/rooms/{room_id}", dependencies=[Depends(admin_check)])
 async def update_room_by_id(
         room_id: int,
         hotel_id: int,
         new_fields: RoomUpdateRequest,
-        _=Depends(admin_check),
         session: AsyncSession = Depends(get_session),
 ) -> RoomResponse:
     """
     Доступно под ролью - админ.
     Изменение номера по id.
-    :param _: проверка на роль 'админ'
     :param hotel_id: id гостиницы
     :param room_id: id номера
     :param new_fields: новые поля
@@ -146,17 +142,15 @@ async def update_room_by_id(
     return await RoomDAO.update(session, updated_fields, room_id)
 
 
-@router.delete("/{hotel_id}/rooms/{room_id}")
+@router.delete("/{hotel_id}/rooms/{room_id}", dependencies=[Depends(admin_check)])
 async def delete_room_by_id(
         hotel_id: int,
         room_id: int,
-        _=Depends(admin_check),
         session: AsyncSession = Depends(get_session),
 ) -> RoomResponse:
     """
     Доступно под ролью - админ.
     Удаление комнаты по id.
-    :param _: проверка на роль 'админ'
     :param hotel_id: id гостиницы
     :param room_id: id комнаты
     :param session: async сессия БД

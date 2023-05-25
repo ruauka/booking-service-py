@@ -46,16 +46,14 @@ async def get_hotels_by_location(
     return await HotelDAO.get_hotels_by_location(session, location, date_from, date_to)
 
 
-@router.post("", status_code=201)
+@router.post("", status_code=201, dependencies=[Depends(admin_check)])
 async def add_hotel(
         hotel: HotelRequest,
-        _=Depends(admin_check),
         session: AsyncSession = Depends(get_session),
 ) -> HotelResponse:
     """
     Доступно под ролью - админ.
     Создание гостинцы.
-    :param _: проверка на роль 'админ'
     :param hotel: гостиница - входящий JSON
     :param session: async сессия БД
     :return: новая гостиница. http response
@@ -101,17 +99,15 @@ async def get_all_hotels(
     return hotels
 
 
-@router.put("/{hotel_id}")
+@router.put("/{hotel_id}", dependencies=[Depends(admin_check)])
 async def update_hotel_by_id(
         hotel_id: int,
         new_fields: HotelUpdateRequest,
-        _=Depends(admin_check),
         session: AsyncSession = Depends(get_session),
 ) -> HotelResponse:
     """
     Доступно под ролью - админ.
     Изменение гостиницы по id.
-    :param _: проверка на роль 'админ'
     :param hotel_id: id гостиницы
     :param new_fields: новые поля
     :param session: async сессия БД
@@ -130,16 +126,14 @@ async def update_hotel_by_id(
     return await HotelDAO.update(session, updated_fields, hotel_id)
 
 
-@router.delete("/{hotel_id}")
+@router.delete("/{hotel_id}", dependencies=[Depends(admin_check)])
 async def delete_hotel_by_id(
         hotel_id: int,
-        _=Depends(admin_check),
         session: AsyncSession = Depends(get_session),
 ) -> HotelResponse:
     """
     Доступно под ролью - админ.
     Удаление гостиницы по id.
-    :param _: проверка на роль 'админ'
     :param hotel_id: id гостиницы
     :param session: async сессия БД
     :return: удаленная гостиница. http response

@@ -50,17 +50,15 @@ async def get_all_users(
     return users
 
 
-@router.put("/{user_id}")
+@router.put("/{user_id}", dependencies=[Depends(admin_check)])
 async def update_user_by_id(
         user_id: int,
         new_fields: UserUpdateRequest,
-        _=Depends(admin_check),
         session: AsyncSession = Depends(get_session),
 ) -> UserResponse:
     """
     Доступно под ролью - админ.
     Изменение пользователя по id.
-    :param _: проверка на роль 'админ'
     :param user_id: id пользователя
     :param new_fields: новые поля
     :param session: async сессия БД
@@ -79,16 +77,14 @@ async def update_user_by_id(
     return await UserDAO.update(session, updated_fields, user_id)
 
 
-@router.delete("/{user_id}")
+@router.delete("/{user_id}", dependencies=[Depends(admin_check)])
 async def delete_user_by_id(
         user_id: int,
-        _=Depends(admin_check),
         session: AsyncSession = Depends(get_session),
 ) -> UserResponse:
     """
     Доступно под ролью - админ.
     Удаление пользователя по id.
-    :param _: проверка на роль 'админ'
     :param user_id: id пользователя
     :param session: async сессия БД
     :return: удаленный пользователь. http response

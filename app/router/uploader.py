@@ -15,16 +15,14 @@ router = APIRouter(
 )
 
 
-@router.post("/sql")
+@router.post("/sql", dependencies=[Depends(admin_check)])
 async def upload_from_sql_file(
         file: UploadFile,
-        _=Depends(admin_check),
         session: AsyncSession = Depends(get_session)
 ):
     """
     Доступно под ролью - админ.
     Хендлер загрузки в БД sql-файла.
-    :param _: проверка на роль 'админ'
     :param file: файл с sql запросами
     :param session: async сессия БД
     :return: информационное сообщение
@@ -40,16 +38,14 @@ async def upload_from_sql_file(
     return "sql scripts loaded successfully"
 
 
-@router.post("/image/hotel")
+@router.post("/image/hotel", dependencies=[Depends(admin_check)])
 async def add_hotel_image(
         name: int,
         file: UploadFile,
-        _=Depends(admin_check),
 ):
     """
     Доступно под ролью - админ.
     Хендлер загрузки в проект фото гостиниц, форматы: JPEG, PNG, WEBP.
-    :param _: проверка на роль 'админ'
     :param name: id фото
     :param file: файл
     :return: информационное сообщение
