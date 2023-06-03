@@ -63,6 +63,21 @@ async def async_client():
         yield async_client
 
 
+@pytest.fixture(scope="function")
+async def auth_async_client():
+    """
+    Фикстура создания асинхронного аутентифицированного клиента для тестирования эндпоинтов.
+    Содержит JWT в куке.
+    """
+    async with AsyncClient(app=fastapi_app, base_url="http://test") as auth_async_client:
+        await auth_async_client.post("/auth/login", json={
+            "email": "ruauka@test.com",
+            "password": "test",
+        })
+        assert auth_async_client.cookies["JWT"]
+        yield auth_async_client
+
+
 # @pytest.fixture(scope="function")
 # async def session():
 #     async with async_session_maker() as session:

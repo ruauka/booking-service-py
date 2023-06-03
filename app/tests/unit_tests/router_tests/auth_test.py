@@ -33,6 +33,20 @@ async def test_login_user(async_client: AsyncClient, email, password, status_cod
     assert resp.status_code == status_code
     # проверка наличия JWT в куке
     if resp.json().get("JWT", None) is not None:
-        assert resp.json().get("JWT", None) is not None
+        assert resp.json().get("JWT") is not None
     else:
-        assert resp.json().get("JWT", None) is None
+        assert resp.json().get("JWT") is None
+
+
+async def test_logout_user(auth_async_client: AsyncClient):
+    """Тест logout пользователя"""
+    resp = await auth_async_client.post("/auth/logout")
+    assert resp.status_code == 200
+    assert resp.json().get("JWT") is None
+
+
+async def test_current_login_user(auth_async_client: AsyncClient):
+    """Тест проверка, кто залогинен"""
+    resp = await auth_async_client.get("/auth/me")
+    assert resp.status_code == 200
+    assert resp.json().get("email") == "ruauka@test.com"
