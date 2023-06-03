@@ -31,6 +31,10 @@ pytest_db_stop:
 test:
 	pytest -v -s
 
+test_cov:
+	pytest -v -s --cov=app --cov-report=html && open htmlcov/index.html
+	#pip install gevent
+
 #pytest_db:
 #	docker-compose -f docker-compose.pytest.yml up -d --remove-orphans
 #
