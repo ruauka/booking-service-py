@@ -1,3 +1,5 @@
+from typing import Literal
+
 from pydantic import BaseSettings
 
 
@@ -5,6 +7,8 @@ class Cfg(BaseSettings):
     """
     Конфигурация сервиса.
     """
+    # MODE: Literal["DEV", "TEST", "PROD"]
+
     DB_HOST: str
     DB_PORT: int
     POSTGRES_USER: str

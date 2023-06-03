@@ -1,10 +1,15 @@
-from collections.abc import AsyncIterator
-from typing import Generator
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase, declared_attr
-from sqlalchemy import Column, Integer
+from sqlalchemy import Column, Integer, NullPool
 
 from config import cfg
+
+# if cfg.MODE == "TEST":
+#     DATABASE_URL = "sqlite+aiosqlite:///:memory:"
+#     # DATABASE_PARAMS = {"poolclass": NullPool}
+# else:
+#     DATABASE_URL = cfg.db_url
+#     # DATABASE_PARAMS = {}
 
 # асинхронный движок алхимии
 engine = create_async_engine(cfg.db_url)
@@ -12,7 +17,7 @@ engine = create_async_engine(cfg.db_url)
 async_session_maker = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 
-async def get_session() -> AsyncIterator[AsyncSession]:
+async def get_session() -> AsyncSession:
     """
     Асинхронный генератор сессий соединений с БД.
     :return: асинхронная сессия

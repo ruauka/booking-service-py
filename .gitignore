@@ -3,7 +3,6 @@
 .idea/
 *.db
 *.pyc
-sflint/testdata/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

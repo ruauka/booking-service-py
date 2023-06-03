@@ -37,7 +37,7 @@ async def get_hotels_by_location(
     :param session: session: async сессия БД
     :return: список гостиниц. http response. Выходная валидация через HotelByLocationResponse
     """
-    # await asyncio.sleep(3)
+    await asyncio.sleep(3)
     if date_from > date_to:
         raise DateFromAfterDateToErr
     if (date_to - date_from).days > 31:
