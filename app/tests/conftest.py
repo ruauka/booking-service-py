@@ -5,7 +5,7 @@ from datetime import datetime
 from httpx import AsyncClient
 from sqlalchemy import insert
 
-from app.storage.database import Base, async_session_maker, engine, get_session
+from app.storage.database import Base, async_session_maker, engine
 from app.models.user import User
 from app.models.room import Room
 from app.models.hotel import Hotel
@@ -78,10 +78,19 @@ async def auth_async_client():
         yield auth_async_client
 
 
-# @pytest.fixture(scope="function")
-# async def session():
-#     async with async_session_maker() as session:
-#         yield session
+@pytest.fixture(scope="session")
+async def admin_async_client():
+    """
+    Фикстура создания асинхронного аутентифицированного клиента с ролью администратора для тестирования эндпоинтов.
+    Содержит JWT в куке.
+    """
+    async with AsyncClient(app=fastapi_app, base_url="http://test") as admin_async_client:
+        await admin_async_client.post("/auth/login", json={
+            "email": "admin@test.com",
+            "password": "test",
+        })
+        assert admin_async_client.cookies["JWT"]
+        yield admin_async_client
 
 
 @pytest.fixture(scope="session")
