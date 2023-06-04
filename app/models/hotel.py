@@ -8,13 +8,13 @@ class Hotel(Base):
     """
     Модель гостиницы.
     """
-    name = Column(String, nullable=False)
+    name = Column(String, nullable=False, unique=True)
     location = Column(String, nullable=False)
     services = Column(ARRAY(String(255)))
     rooms_quantity = Column(Integer, nullable=False)
     image_id = Column(Integer, unique=True)
 
-    rooms = relationship("Room", back_populates="hotel")
+    rooms = relationship("Room", back_populates="hotel", cascade="all, delete", passive_deletes=True)
 
     def __str__(self):
         return f"Отель {self.name} {self.location[:30]}"

@@ -8,7 +8,7 @@ class Room(Base):
     """
     Модель комнаты.
     """
-    hotel_id = Column(ForeignKey("hotels.id"), nullable=False)
+    hotel_id = Column(ForeignKey("hotels.id", ondelete="CASCADE"), nullable=False)
     name = Column(String, nullable=False)
     description = Column(String, nullable=True)
     price = Column(Integer, nullable=False)
@@ -17,7 +17,7 @@ class Room(Base):
     image_id = Column(Integer)
 
     hotel = relationship("Hotel", back_populates="rooms")
-    booking = relationship("Booking", back_populates="room")
+    booking = relationship("Booking", back_populates="room", cascade="all, delete", passive_deletes=True)
 
     def __str__(self):
         return f"Room {self.name}"

@@ -8,7 +8,7 @@ class Booking(Base):
     """
     Модель бронирования.
     """
-    room_id = Column(ForeignKey("rooms.id"))
+    room_id = Column(ForeignKey("rooms.id", ondelete="CASCADE"))
     user_id = Column(ForeignKey("users.id"))
     date_from = Column(Date, nullable=False)
     date_to = Column(Date, nullable=False)
