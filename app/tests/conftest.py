@@ -13,12 +13,12 @@ from app.models.booking import Booking
 from main import app as fastapi_app
 
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture(scope="function", autouse=True)
 async def prepare_database():
     """
     Фикстура создания таблиц и наполнения их данными в тестовой БД.
     autouse=True - вызов фикстуры перед запуском первого теста.
-    scope="session" - вызов фикстуры 1 раз на время прогона всех тестов.
+    scope="function" - вызов фикстуры каждый раз перед каждым тестом.
     """
     async with engine.begin() as conn:
         # Удаление всех таблиц из БД

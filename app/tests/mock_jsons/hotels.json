@@ -40,5 +40,12 @@
         "services": ["Wi-Fi", "Парковка", "Кондиционер в номере", "Тренажёрный зал"],
         "rooms_quantity": 45,
         "image_id": 6
+    },
+    {
+        "name": "test_name",
+        "location": "test_location",
+        "services": ["test_services1", "test_services2"],
+        "rooms_quantity": 10,
+        "image_id": 7
     }
 ]

@@ -4,7 +4,7 @@ from httpx import AsyncClient
 
 @pytest.mark.parametrize("email, password, status_code", [
     ("test_client@test.com", "test", 201),
-    ("test_client@test.com", "test", 400),
+    ("ruauka@test.com", "test", 400),
     ("test_client1@test.com", "test1", 201),
     ("abcde", "12345", 422),
 ])

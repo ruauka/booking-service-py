@@ -3,7 +3,7 @@ from httpx import AsyncClient
 
 
 @pytest.mark.parametrize("name, location, services, rooms_quantity, image_id, status_code", [
-    ("test_name", "test_location", ["test_services1", "test_services2"], 10, 100, 201),
+    ("test_name1", "test_location1", ["test_services1", "test_services2"], 10, 100, 201),
     ("test_name", "test_location", ["test_services1", "test_services2"], 10, 100, 400),
 ])
 async def test_add_hotel(
@@ -45,7 +45,7 @@ async def test_get_all_hotels(async_client: AsyncClient):
 
 @pytest.mark.parametrize("hotel_id, name, location, services, rooms_quantity, image_id, status_code", [
     (6, "test_name2", "test_location2", ["test_services1", "test_services2"], 6, 6, 200),
-    (3, "test_name2", "test_location2", ["test_services1", "test_services2"], 2, 2, 400),
+    (3, "test_name", "test_location", ["test_services1", "test_services2"], 10, 7, 400),
     (2, None, None, None, None, None, 400),
     (100, "test_name", "test_location", ["test_services1", "test_services1"], 2, 2, 400),
 ])
