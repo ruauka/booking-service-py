@@ -4,15 +4,15 @@ from sqlalchemy import Column, Integer, NullPool
 
 from config import cfg
 
-# if cfg.MODE == "TEST":
-#     DATABASE_URL = "sqlite+aiosqlite:///:memory:"
-#     # DATABASE_PARAMS = {"poolclass": NullPool}
-# else:
-#     DATABASE_URL = cfg.db_url
-#     # DATABASE_PARAMS = {}
+if cfg.MODE == "TEST":
+    DATABASE_URL = cfg.db_url_test
+    # DATABASE_PARAMS = {"poolclass": NullPool}
+else:
+    DATABASE_URL = cfg.db_url
+    # DATABASE_PARAMS = {}
 
 # асинхронный движок алхимии
-engine = create_async_engine(cfg.db_url)
+engine = create_async_engine(DATABASE_URL)  # **DATABASE_PARAMS
 # асинхронный генератор сессий для бд
 async_session_maker = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 

@@ -10,6 +10,7 @@ from app.models.user import User
 from app.models.room import Room
 from app.models.hotel import Hotel
 from app.models.booking import Booking
+from config import cfg
 from main import app as fastapi_app
 
 
@@ -20,6 +21,8 @@ async def prepare_database():
     autouse=True - вызов фикстуры перед запуском первого теста.
     scope="function" - вызов фикстуры каждый раз перед каждым тестом.
     """
+    assert cfg.MODE == "TEST"
+
     async with engine.begin() as conn:
         # Удаление всех таблиц из БД
         await conn.run_sync(Base.metadata.drop_all)
@@ -30,9 +33,6 @@ async def prepare_database():
         with open(f"app/tests/mock_jsons/{model}.json", encoding="utf-8") as file:
             return json.load(file)
 
-    hotels = open_mock_json("hotels")
-    rooms = open_mock_json("rooms")
-    users = open_mock_json("users")
     bookings = open_mock_json("bookings")
 
     for booking in bookings:
@@ -42,9 +42,9 @@ async def prepare_database():
 
     async with async_session_maker() as session:
         for Model, values in [
-            (Hotel, hotels),
-            (Room, rooms),
-            (User, users),
+            (Hotel, open_mock_json("hotels")),
+            (Room, open_mock_json("rooms")),
+            (User, open_mock_json("users")),
             (Booking, bookings),
         ]:
             query = insert(Model).values(values)

@@ -20,9 +20,9 @@ pytest_db_up:
 	@docker run -d --rm \
 			--name=pytest_db \
  			-p 5432:5432 \
- 			-e POSTGRES_USER=user \
- 			-e POSTGRES_PASSWORD=password \
- 			-e POSTGRES_DB=hotels \
+ 			-e POSTGRES_USER=test \
+ 			-e POSTGRES_PASSWORD=test \
+ 			-e POSTGRES_DB=test \
  			postgres:latest
 
 pytest_db_stop:
