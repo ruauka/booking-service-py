@@ -93,6 +93,15 @@ async def admin_async_client():
         yield admin_async_client
 
 
+@pytest.fixture(scope="function")
+async def session():
+    """
+    Асинхронный генератор сессий соединений с тестовой БД.
+    """
+    async with async_session_maker() as session:
+        yield session
+
+
 @pytest.fixture(scope="session")
 def event_loop(request):
     """
