@@ -1,11 +1,18 @@
+from datetime import date, datetime, timedelta
 from typing import Any, List
+
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
-from datetime import date, datetime, timedelta
 
 from app.auth.dependencies import admin_check
-from app.errors import EmptyFieldsToUpdateErr, RoomAlreadyExistsErr, RoomNotFoundErr, NoRoomsErr, HotelNotFoundErr, \
-    NoRoomsOnPeriodErr
+from app.errors import (
+    EmptyFieldsToUpdateErr,
+    HotelNotFoundErr,
+    NoRoomsErr,
+    NoRoomsOnPeriodErr,
+    RoomAlreadyExistsErr,
+    RoomNotFoundErr,
+)
 from app.models.room import Room
 from app.schemas.room import RoomRequest, RoomResponse, RoomUpdateRequest
 from app.storage.database import get_session

@@ -2,10 +2,11 @@ import pytest
 from httpx import AsyncClient
 
 
-@pytest.mark.parametrize("name, location, services, rooms_quantity, image_id, status_code", [
-    ("test_name1", "test_location1", ["test_services1", "test_services2"], 10, 100, 201),
-    ("test_name", "test_location", ["test_services1", "test_services2"], 10, 100, 400),
-])
+@pytest.mark.parametrize(
+    "name, location, services, rooms_quantity, image_id, status_code", [
+        ("test_name1", "test_location1", ["test_services1", "test_services2"], 10, 100, 201),
+        ("test_name", "test_location", ["test_services1", "test_services2"], 10, 100, 400),
+    ])
 async def test_add_hotel(
         admin_async_client: AsyncClient,
         name,

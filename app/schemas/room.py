@@ -1,5 +1,6 @@
-from typing import Optional, Any, List
-from pydantic import BaseModel, Json
+from typing import List, Optional
+
+from pydantic import BaseModel
 
 
 class RoomRequest(BaseModel):

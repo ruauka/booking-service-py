@@ -1,13 +1,13 @@
 from fastapi import APIRouter, Depends, Response
-from sqlalchemy.ext.asyncio import AsyncSession
 from pydantic import parse_obj_as
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.auth.auth import get_password_hash, verify_user, create_JWT_token
+from app.auth.auth import create_JWT_token, get_password_hash, verify_user
 from app.auth.dependencies import auth_user
-from app.errors import UserAlreadyExistsErr, IncorrectEmailOrPasswordErr
-from app.storage.database import get_session
-from app.schemas.user import UserRequest, UserResponse, UserLoginRequest
+from app.errors import IncorrectEmailOrPasswordErr, UserAlreadyExistsErr
 from app.models.user import User
+from app.schemas.user import UserLoginRequest, UserRequest, UserResponse
+from app.storage.database import get_session
 from app.storage.user import UserDAO
 
 # регистрация роута авторизации

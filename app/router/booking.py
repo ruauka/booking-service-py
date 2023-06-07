@@ -1,11 +1,17 @@
 from datetime import date, datetime, timedelta
-from typing import List, Any
+from typing import Any, List
+
 from fastapi import APIRouter, Depends, Query
-from sqlalchemy.ext.asyncio import AsyncSession
 from pydantic import parse_obj_as
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.dependencies import auth_user
-from app.errors import NoBookingsErr, NoAvailableRoomsErr, BookingNotFoundErr, EmptyFieldsToUpdateErr
+from app.errors import (
+    BookingNotFoundErr,
+    EmptyFieldsToUpdateErr,
+    NoAvailableRoomsErr,
+    NoBookingsErr,
+)
 from app.models.user import User
 from app.schemas.booking import BookingResponse, BookingUpdateRequest
 from app.storage.booking import BookingDAO

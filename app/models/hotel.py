@@ -1,5 +1,5 @@
+from sqlalchemy import ARRAY, Column, Integer, String
 from sqlalchemy.orm import relationship
-from sqlalchemy import Column, Integer, String, ARRAY
 
 from app.storage.database import Base
 

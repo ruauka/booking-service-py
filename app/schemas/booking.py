@@ -1,6 +1,7 @@
-from typing import Optional, Any, List
-from pydantic import BaseModel, Json
 from datetime import date
+from typing import Optional
+
+from pydantic import BaseModel
 
 
 class BookingUpdateRequest(BaseModel):

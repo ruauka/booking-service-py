@@ -35,6 +35,15 @@ test_cov:
 	pytest -v -s --cov=app --cov-report=html && open htmlcov/index.html
 	#pip install gevent
 
+black:
+	black app --diff --color
+
+flake:
+	flake8 app
+
+isort:
+	isort .
+
 #pytest_db:
 #	docker-compose -f docker-compose.pytest.yml up -d --remove-orphans
 #

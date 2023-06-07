@@ -1,15 +1,27 @@
 import asyncio
-from typing import Any, List
-from fastapi import APIRouter, Depends, Query
-from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import date, datetime, timedelta
+from typing import Any, List
+
+from fastapi import APIRouter, Depends, Query
 from fastapi_cache.decorator import cache
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.dependencies import admin_check
-from app.errors import HotelAlreadyExistsErr, HotelNotFoundErr, NoHotelsErr, EmptyFieldsToUpdateErr, \
-    DateFromAfterDateToErr, LongPeriodBookingErr
+from app.errors import (
+    DateFromAfterDateToErr,
+    EmptyFieldsToUpdateErr,
+    HotelAlreadyExistsErr,
+    HotelNotFoundErr,
+    LongPeriodBookingErr,
+    NoHotelsErr,
+)
 from app.models.hotel import Hotel
-from app.schemas.hotel import HotelRequest, HotelResponse, HotelUpdateRequest, HotelByLocationResponse
+from app.schemas.hotel import (
+    HotelByLocationResponse,
+    HotelRequest,
+    HotelResponse,
+    HotelUpdateRequest,
+)
 from app.storage.database import get_session
 from app.storage.hotel import HotelDAO
 from app.utils import set_new_fields

@@ -1,15 +1,16 @@
-import pytest
 import asyncio
 import json
-from datetime import datetime
+from datetime import datetime, date
+
+import pytest
 from httpx import AsyncClient
 from sqlalchemy import insert
 
-from app.storage.database import Base, async_session_maker, engine
-from app.models.user import User
-from app.models.room import Room
-from app.models.hotel import Hotel
 from app.models.booking import Booking
+from app.models.hotel import Hotel
+from app.models.room import Room
+from app.models.user import User
+from app.storage.database import Base, async_session_maker, engine
 from config import cfg
 from main import app as fastapi_app
 

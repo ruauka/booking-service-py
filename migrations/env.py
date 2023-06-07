@@ -1,9 +1,7 @@
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
-
 from alembic import context
+from sqlalchemy import engine_from_config, pool
 
 from config import cfg
 
@@ -23,15 +21,16 @@ config.set_main_option("sqlalchemy.url", f"{cfg.db_url}?async_fallback=True")
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# add your model's MetaData object here
-# for 'autogenerate' support
-# from myapp import mymodel
-from app.storage.database import Base
 # импорт моделей для обогащения Base
 from app.models.booking import Booking
 from app.models.hotel import Hotel
 from app.models.room import Room
 from app.models.user import User
+
+# add your model's MetaData object here
+# for 'autogenerate' support
+# from myapp import mymodel
+from app.storage.database import Base
 
 __all__ = (
     "User",

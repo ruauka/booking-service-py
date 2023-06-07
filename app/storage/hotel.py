@@ -1,9 +1,10 @@
 from datetime import date
 from typing import Any
+
+from fastapi import HTTPException, status
 from sqlalchemy import and_, func, or_, select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import HTTPException, status
 
 from app.errors import UnknownErr
 from app.models.booking import Booking
@@ -32,7 +33,7 @@ class HotelDAO(BaseDAO):
         WITH booked_rooms AS (
             SELECT room_id, COUNT(room_id) AS rooms_booked
             FROM bookings
-            WHERE 
+            WHERE
                 (date_from >= '2023-05-15' AND date_from <= '2023-06-20') OR
                 (date_from <= '2023-05-15' AND date_to > '2023-05-15')
             GROUP BY room_id

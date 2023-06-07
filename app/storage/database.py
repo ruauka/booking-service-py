@@ -1,15 +1,15 @@
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
-from sqlalchemy.orm import DeclarativeBase, declared_attr
 from sqlalchemy import Column, Integer, NullPool
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.orm import DeclarativeBase, declared_attr
 
 from config import cfg
 
 if cfg.MODE == "TEST":
     DATABASE_URL = cfg.db_url_test
-    # DATABASE_PARAMS = {"poolclass": NullPool}
+    DATABASE_PARAMS = {"poolclass": NullPool}
 else:
     DATABASE_URL = cfg.db_url
-    # DATABASE_PARAMS = {}
+    DATABASE_PARAMS = {}
 
 # асинхронный движок алхимии
 engine = create_async_engine(DATABASE_URL)  # **DATABASE_PARAMS

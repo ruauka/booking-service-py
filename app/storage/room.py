@@ -3,8 +3,8 @@ from typing import Any
 
 from fastapi import HTTPException, status
 from sqlalchemy import and_, func, or_, select
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.errors import UnknownErr
 from app.models.booking import Booking

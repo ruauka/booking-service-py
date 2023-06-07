@@ -1,12 +1,13 @@
 from typing import Optional
+
 from jose import jwt
 from pydantic import EmailStr
 from sqladmin.authentication import AuthenticationBackend
+from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
 from starlette.responses import RedirectResponse
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.auth.auth import verify_user, create_JWT_token
+from app.auth.auth import create_JWT_token, verify_user
 from app.errors import NoAdminErr, UserNotFoundErr
 from app.storage.database import async_session_maker
 from app.storage.user import UserDAO

@@ -1,9 +1,10 @@
-from typing import List, Any
+from typing import Any
+
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.dependencies import admin_check
-from app.errors import UserNotFoundErr, EmptyFieldsToUpdateErr, NoUsersErr
+from app.errors import EmptyFieldsToUpdateErr, NoUsersErr, UserNotFoundErr
 from app.schemas.user import UserResponse, UserUpdateRequest
 from app.storage.database import get_session
 from app.storage.user import UserDAO

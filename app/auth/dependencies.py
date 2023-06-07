@@ -1,10 +1,17 @@
 from typing import Dict, Optional
+
 from fastapi import Depends, Request
-from jose import jwt, JWTError, ExpiredSignatureError
+from jose import ExpiredSignatureError, JWTError, jwt
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.errors import TokenAbsentErr, JWTExpiredErr, IncorrectJWTFormatErr, UnauthorizedUserErr, NoAdminErr, \
-    UnknownJWTPareErr
+from app.errors import (
+    IncorrectJWTFormatErr,
+    JWTExpiredErr,
+    NoAdminErr,
+    TokenAbsentErr,
+    UnauthorizedUserErr,
+    UnknownJWTPareErr,
+)
 from app.models.user import User
 from app.storage.database import get_session
 from app.storage.user import UserDAO
