@@ -12,6 +12,7 @@ from app.errors import (
     NoAvailableRoomsErr,
     NoBookingsErr,
 )
+from app.logger import logger
 from app.models.user import User
 from app.schemas.booking import BookingResponse, BookingUpdateRequest
 from app.storage.booking import BookingDAO
@@ -47,6 +48,7 @@ async def add_booking(
     free_rooms = await BookingDAO.get_free_rooms(session, room_id, date_from, date_to)
     # проверка на свободные комнаты
     if free_rooms <= 0:
+        logger.error(NoAvailableRoomsErr.detail, extra={"status_code": NoAvailableRoomsErr.status_code})
         raise NoAvailableRoomsErr
 
     booking = await BookingDAO.add(session, user.id, room_id, date_from, date_to)
@@ -74,6 +76,7 @@ async def get_booking_by_id(
     """
     booking = await BookingDAO.get_one(session, id=booking_id, user_id=user.id)
     if not booking:
+        logger.error(BookingNotFoundErr.detail, extra={"status_code": BookingNotFoundErr.status_code})
         raise BookingNotFoundErr
 
     return booking
@@ -93,6 +96,7 @@ async def get_all_bookings_by_user(
     """
     bookings = await BookingDAO.get_all(session, user_id=user.id)
     if len(bookings) == 0:
+        logger.error(NoBookingsErr.detail, extra={"status_code": NoBookingsErr.status_code})
         raise NoBookingsErr
 
     return bookings
@@ -116,10 +120,12 @@ async def update_booking_by_id(
     """
     # проверка на полностью пустые поля
     if new_fields.is_empty():
+        logger.error(EmptyFieldsToUpdateErr.detail, extra={"status_code": EmptyFieldsToUpdateErr.status_code})
         raise EmptyFieldsToUpdateErr
 
     booking = await BookingDAO.get_one(session, id=booking_id, user_id=user.id)
     if not booking:
+        logger.error(BookingNotFoundErr.detail, extra={"status_code": BookingNotFoundErr.status_code})
         raise BookingNotFoundErr
 
     # установка новых значений полей
@@ -133,6 +139,7 @@ async def update_booking_by_id(
     )
     # проверка на свободные комнаты
     if free_rooms <= 0:
+        logger.error(NoAvailableRoomsErr.detail, extra={"status_code": NoAvailableRoomsErr.status_code})
         raise NoAvailableRoomsErr
 
     return await BookingDAO.update(session, updated_fields, booking_id)
@@ -154,6 +161,7 @@ async def delete_booking_by_id(
     """
     booking = await BookingDAO.get_one(session, user_id=user.id, id=booking_id)
     if not booking:
+        logger.error(BookingNotFoundErr.detail, extra={"status_code": BookingNotFoundErr.status_code})
         raise BookingNotFoundErr
 
     return await BookingDAO.delete(session, booking_id)

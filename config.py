@@ -9,6 +9,8 @@ class Cfg(BaseSettings):
     """
     # мод работы сервиса
     MODE: Literal["DEV", "TEST", "PROD"]
+    # уровень логирования
+    LOG_LEVEL: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
 
     # конфиг БД
     DB_HOST: str

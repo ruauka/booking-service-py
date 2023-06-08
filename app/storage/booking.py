@@ -7,6 +7,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.errors import UnknownErr
+from app.logger import logger
 from app.models.booking import Booking
 from app.models.room import Room
 from app.storage.dao import BaseDAO
@@ -47,12 +48,15 @@ class BookingDAO(BaseDAO):
             return new_booking.scalar()
         except (SQLAlchemyError, Exception) as err:
             if isinstance(err, SQLAlchemyError):
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail=str(err),
-                )
+                msg = "Database Exc: Cannot add booking"
             elif isinstance(err, Exception):
-                raise UnknownErr
+                msg = "Unknown Exc: Cannot add booking"
+            extra = {
+                "room_id": room_id,
+                "date_from": date_from,
+                "date_to": date_to,
+            }
+            logger.error(msg, extra=extra)
 
     @classmethod
     async def get_room_price(cls, session: AsyncSession, room_id: int) -> int:
@@ -136,9 +140,12 @@ class BookingDAO(BaseDAO):
             return free_rooms
         except (SQLAlchemyError, Exception) as err:
             if isinstance(err, SQLAlchemyError):
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail=str(err),
-                )
+                msg = "Database Exc: Cannot add booking"
             elif isinstance(err, Exception):
-                raise UnknownErr
+                msg = "Unknown Exc: Cannot add booking"
+            extra = {
+                "room_id": room_id,
+                "date_from": date_from,
+                "date_to": date_to,
+            }
+            logger.error(msg, extra=extra)

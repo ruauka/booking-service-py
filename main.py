@@ -1,5 +1,7 @@
+import time
+
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi_cache import FastAPICache
@@ -9,6 +11,7 @@ from sqladmin import Admin
 
 from app.admin_panel.auth import authentication_backend
 from app.admin_panel.views import BookingAdmin, HotelAdmin, RoomAdmin, UserAdmin
+from app.logger import logger
 from app.router.auth import router as auth_router
 from app.router.booking import router as booking_router
 from app.router.hotel import router as hotel_router
@@ -47,6 +50,34 @@ app.add_middleware(
                    "Access-Control-Allow-Origin",
                    "Authorization"],
 )
+
+
+@app.middleware("http")
+async def request_time_count(request: Request, next):
+    """
+    Middleware для запросов.
+    :param request: тело запроса
+    :param next: хендлер
+    :return:
+    """
+    start_time = time.time()
+    response = await next(request)
+    process_time = time.time() - start_time
+    # При подключении Prometheus + Grafana подобный лог не требуется
+    logger.info("Request handling time", extra={
+        "status_code": response.status_code,
+        "process_time": round(process_time, 4),
+    })
+    return response
+
+
+# логгирование ошибок в SENTRY
+# https://docs.sentry.io/platforms/python/guides/fastapi/
+# if settings.MODE != "TEST":
+#     sentry_sdk.init(
+#         dsn=settings.SENTRY_DSN,
+#         traces_sample_rate=1.0,
+#     )
 
 
 # startup, shutdown - события fastapi

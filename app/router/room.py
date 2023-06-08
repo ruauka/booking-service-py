@@ -13,6 +13,7 @@ from app.errors import (
     RoomAlreadyExistsErr,
     RoomNotFoundErr,
 )
+from app.logger import logger
 from app.models.room import Room
 from app.schemas.room import RoomRequest, RoomResponse, RoomUpdateRequest
 from app.storage.database import get_session
@@ -44,6 +45,7 @@ async def get_rooms_by_time(
     """
     rooms = await RoomDAO.get_rooms_by_time(session, hotel_id, date_from, date_to)
     if len(rooms) == 0:
+        logger.error(NoRoomsOnPeriodErr.detail, extra={"status_code": NoRoomsOnPeriodErr.status_code})
         raise NoRoomsOnPeriodErr
 
     return rooms
@@ -65,6 +67,7 @@ async def add_room(
     """
     room_exist = await RoomDAO.get_one(session, name=room.name)
     if room_exist:
+        logger.error(RoomAlreadyExistsErr.detail, extra={"status_code": RoomAlreadyExistsErr.status_code})
         raise RoomAlreadyExistsErr
 
     return await RoomDAO.add(session, Room.add_id(hotel_id, room))
@@ -85,10 +88,12 @@ async def get_room_by_id(
     """
     hotel = await HotelDAO.get_one(session, id=hotel_id)
     if not hotel:
+        logger.error(HotelNotFoundErr.detail, extra={"status_code": HotelNotFoundErr.status_code})
         raise HotelNotFoundErr
 
     room = await RoomDAO.get_one(session, id=room_id)
     if not room:
+        logger.error(RoomNotFoundErr.detail, extra={"status_code": RoomNotFoundErr.status_code})
         raise RoomNotFoundErr
 
     return room
@@ -107,10 +112,12 @@ async def get_all_rooms_by_hotel(
     """
     hotel = await HotelDAO.get_one(session, id=hotel_id)
     if not hotel:
+        logger.error(HotelNotFoundErr.detail, extra={"status_code": HotelNotFoundErr.status_code})
         raise HotelNotFoundErr
 
     rooms = await RoomDAO.get_all(session, hotel_id=hotel_id)
     if len(rooms) == 0:
+        logger.error(NoRoomsErr.detail, extra={"status_code": NoRoomsErr.status_code})
         raise NoRoomsErr
 
     return rooms
@@ -134,14 +141,17 @@ async def update_room_by_id(
     """
     hotel = await HotelDAO.get_one(session, id=hotel_id)
     if not hotel:
+        logger.error(HotelNotFoundErr.detail, extra={"status_code": HotelNotFoundErr.status_code})
         raise HotelNotFoundErr
 
     # проверка на полностью пустые поля
     if new_fields.is_empty():
+        logger.error(EmptyFieldsToUpdateErr.detail, extra={"status_code": EmptyFieldsToUpdateErr.status_code})
         raise EmptyFieldsToUpdateErr
 
     room = await RoomDAO.get_one(session, id=room_id)
     if not room:
+        logger.error(RoomNotFoundErr.detail, extra={"status_code": RoomNotFoundErr.status_code})
         raise RoomNotFoundErr
 
     # установка новых значений полей
@@ -165,10 +175,12 @@ async def delete_room_by_id(
     """
     hotel = await HotelDAO.get_one(session, id=hotel_id)
     if not hotel:
+        logger.error(HotelNotFoundErr.detail, extra={"status_code": HotelNotFoundErr.status_code})
         raise HotelNotFoundErr
 
     room = await RoomDAO.get_one(session, id=room_id)
     if not room:
+        logger.error(RoomNotFoundErr.detail, extra={"status_code": RoomNotFoundErr.status_code})
         raise RoomNotFoundErr
 
     return await RoomDAO.delete(session, room_id)

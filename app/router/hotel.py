@@ -15,6 +15,7 @@ from app.errors import (
     LongPeriodBookingErr,
     NoHotelsErr,
 )
+from app.logger import logger
 from app.models.hotel import Hotel
 from app.schemas.hotel import (
     HotelByLocationResponse,
@@ -51,8 +52,11 @@ async def get_hotels_by_location(
     """
     await asyncio.sleep(3)
     if date_from > date_to:
+        logger.error(DateFromAfterDateToErr.detail, extra={"status_code": DateFromAfterDateToErr.status_code})
         raise DateFromAfterDateToErr
+
     if (date_to - date_from).days > 31:
+        logger.error(LongPeriodBookingErr.detail, extra={"status_code": LongPeriodBookingErr.status_code})
         raise LongPeriodBookingErr
 
     return await HotelDAO.get_hotels_by_location(session, location, date_from, date_to)
@@ -72,6 +76,7 @@ async def add_hotel(
     """
     hotel_exist: Hotel = await HotelDAO.get_one(session, name=hotel.name)
     if hotel_exist:
+        logger.error(HotelAlreadyExistsErr.detail, extra={"status_code": HotelAlreadyExistsErr.status_code})
         raise HotelAlreadyExistsErr
 
     return await HotelDAO.add(session, hotel.dict())
@@ -90,6 +95,7 @@ async def get_hotel_by_id(
     """
     hotel = await HotelDAO.get_one(session, id=hotel_id)
     if not hotel:
+        logger.error(HotelNotFoundErr.detail, extra={"status_code": HotelNotFoundErr.status_code})
         raise HotelNotFoundErr
 
     return hotel
@@ -106,6 +112,7 @@ async def get_all_hotels(
     """
     hotels = await HotelDAO.get_all(session)
     if len(hotels) == 0:
+        logger.error(NoHotelsErr.detail, extra={"status_code": NoHotelsErr.status_code})
         raise NoHotelsErr
 
     return hotels
@@ -127,10 +134,12 @@ async def update_hotel_by_id(
     """
     # проверка на полностью пустые поля
     if new_fields.is_empty():
+        logger.error(EmptyFieldsToUpdateErr.detail, extra={"status_code": EmptyFieldsToUpdateErr.status_code})
         raise EmptyFieldsToUpdateErr
 
     hotel = await HotelDAO.get_one(session, id=hotel_id)
     if not hotel:
+        logger.error(HotelNotFoundErr.detail, extra={"status_code": HotelNotFoundErr.status_code})
         raise HotelNotFoundErr
 
     # установка новых значений полей
@@ -152,6 +161,7 @@ async def delete_hotel_by_id(
     """
     hotel = await HotelDAO.get_one(session, id=hotel_id)
     if not hotel:
+        logger.error(HotelNotFoundErr.detail, extra={"status_code": HotelNotFoundErr.status_code})
         raise HotelNotFoundErr
 
     return await HotelDAO.delete(session, hotel_id)

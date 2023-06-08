@@ -1,10 +1,11 @@
 from typing import Any
 
-from sqlalchemy import delete, insert, select, update, or_
+from sqlalchemy import delete, insert, or_, select, update
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.errors import InstanceAlreadyExistsErr, UnknownErr
+from app.logger import logger
 
 
 class BaseDAO:
@@ -21,10 +22,20 @@ class BaseDAO:
         :param data: значение полей инстанса
         :return: объект добавленного в БД инстанса
         """
-        query = insert(cls.model).values(**data).returning(cls.model)
-        result = await session.execute(query)
-        await session.commit()
-        return result.scalar_one_or_none()
+        try:
+            query = insert(cls.model).values(**data).returning(cls.model)
+            result = await session.execute(query)
+            await session.commit()
+            return result.scalar_one_or_none()
+        except (SQLAlchemyError, Exception) as err:
+            if isinstance(err, SQLAlchemyError):
+                logger.error(InstanceAlreadyExistsErr.detail,
+                             extra={"status_code": InstanceAlreadyExistsErr.status_code})
+                raise InstanceAlreadyExistsErr
+            elif isinstance(err, Exception):
+                logger.error(UnknownErr.detail,
+                             extra={"status_code": UnknownErr.status_code})
+                raise UnknownErr
 
     @classmethod
     async def get_one(cls, session: AsyncSession, **filters) -> Any:
@@ -66,8 +77,12 @@ class BaseDAO:
             return result.scalar_one_or_none()
         except (SQLAlchemyError, Exception) as err:
             if isinstance(err, SQLAlchemyError):
+                logger.error(InstanceAlreadyExistsErr.detail,
+                             extra={"status_code": InstanceAlreadyExistsErr.status_code})
                 raise InstanceAlreadyExistsErr
             elif isinstance(err, Exception):
+                logger.error(UnknownErr.detail,
+                             extra={"status_code": UnknownErr.status_code})
                 raise UnknownErr
 
     @classmethod

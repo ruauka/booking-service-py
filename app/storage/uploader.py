@@ -16,7 +16,7 @@ async def upload_sql_queries(session: AsyncSession, queries: list[str]) -> None:
     try:
         for query in queries:
             await session.execute(text(query))
-            await session.commit()
+        await session.commit()
     except (SQLAlchemyError, Exception) as err:
         if isinstance(err, SQLAlchemyError):
             raise HTTPException(
