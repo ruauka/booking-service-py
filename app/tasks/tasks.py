@@ -1,5 +1,6 @@
 import smtplib
 from pathlib import Path
+from typing import List
 
 from PIL import Image
 from pydantic import EmailStr
@@ -27,13 +28,15 @@ def picture_compression(path: str):
 
 
 @celery.task
-def send_booking_confirmation_email(booking: dict, email_to: EmailStr):
+def send_booking_confirmation_email(booking: dict, email_to: EmailStr, room_name, hotel_name):
     """
     Фоновая задача отправки подтверждения бронирования номера на почту пользователя.
+    :param hotel_name: название гостиницы
+    :param room_name: название номера
     :param booking: словарь из БД
     :param email_to: почта пользователя
     """
-    msg_content = create_booking_confirmation_template(booking, email_to)
+    msg_content = create_booking_confirmation_template(booking, email_to, room_name, hotel_name)
 
     with smtplib.SMTP_SSL(cfg.SMTP_HOST, cfg.SMTP_PORT) as server:
         server.login(cfg.SMTP_GMAIL, cfg.SMTP_PASSWORD)

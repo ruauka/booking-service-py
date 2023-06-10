@@ -1,44 +1,138 @@
 version: "3.8"
 
 services:
+  app:
+    container_name: app
+    build:
+      dockerfile: Dockerfile
+    restart: always
+    env_file:
+      - creds.env
+    command: [ "/app/bash/app.sh" ]
+    ports:
+      - "8000:8000"
+    depends_on:
+      database:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
   database:
     image: postgres:latest
     container_name: database
-#    restart: always
+    restart: always
     env_file:
       - creds.env
-    ports:
-      - "5432:5432"
+#    ports:
+#      - "5432:5432"
     volumes:
       - db:/var/lib/postgresql/data
-  #    healthcheck:
-  #      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
-  #      interval: 5s
-  #      timeout: 5s
-  #      retries: 5
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: pgadmin
+#  pgadmin:
+#    image: dpage/pgadmin4
+#    container_name: pgadmin
 #    restart: always
-    env_file:
-      - creds.env
-    volumes:
-      - pgadmin:/var/lib/pgadmin
-    ports:
-      - "5050:80"
+#    env_file:
+#      - creds.env
+#    volumes:
+#      - pgadmin:/var/lib/pgadmin
+#    ports:
+#      - "5050:80"
 
   redis:
     image: "redis:latest"
     container_name: redis
+    restart: always
     env_file:
       - creds.env
-    volumes:
-      - redis:/data
     ports:
       - "6379:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  celery:
+    build:
+      dockerfile: Dockerfile
+    container_name: app_celery
+    restart: always
+    command: [ "/app/bash/celery.sh", "celery" ]
+    env_file:
+      - creds.env
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  flower:
+    build:
+      dockerfile: Dockerfile
+    restart: always
+    container_name: app_flower
+    command: [ "/app/bash/celery.sh", "flower" ]
+    env_file:
+      - creds.env
+    ports:
+      - "5555:5555"
+    depends_on:
+      redis:
+        condition: service_healthy
 
 volumes:
   db:
-  pgadmin:
-  redis:
+#  pgadmin:
+
+#version: "3.8"
+#
+#services:
+#  database:
+#    image: postgres:latest
+#    container_name: database
+##    restart: always
+#    env_file:
+#      - creds.env
+#    ports:
+#      - "5432:5432"
+#    volumes:
+#      - db:/var/lib/postgresql/data
+#    healthcheck:
+#      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+#      interval: 5s
+#      timeout: 5s
+#      retries: 5
+#
+#  pgadmin:
+#    image: dpage/pgadmin4
+#    container_name: pgadmin
+##    restart: always
+#    env_file:
+#      - creds.env
+#    volumes:
+#      - pgadmin:/var/lib/pgadmin
+#    ports:
+#      - "5050:80"
+#
+#  redis:
+#    image: "redis:latest"
+#    container_name: redis
+##    restart: always
+#    env_file:
+#      - creds.env
+#    ports:
+#      - "6379:6379"
+#    healthcheck:
+#      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+#      interval: 5s
+#      timeout: 5s
+#      retries: 5
+#
+#
+#volumes:
+#  db:
+#  pgadmin:

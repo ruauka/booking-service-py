@@ -91,7 +91,7 @@ async def get_room_by_id(
         logger.error(HotelNotFoundErr.detail, extra={"status_code": HotelNotFoundErr.status_code})
         raise HotelNotFoundErr
 
-    room = await RoomDAO.get_one(session, id=room_id)
+    room = await RoomDAO.get_one(session, hotel_id=hotel_id, id=room_id)
     if not room:
         logger.error(RoomNotFoundErr.detail, extra={"status_code": RoomNotFoundErr.status_code})
         raise RoomNotFoundErr

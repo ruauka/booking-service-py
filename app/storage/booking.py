@@ -1,14 +1,13 @@
 from datetime import date
-from typing import Any
+from typing import Any, List
 
-from fastapi import HTTPException, status
 from sqlalchemy import and_, func, insert, or_, select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.errors import UnknownErr
 from app.logger import logger
 from app.models.booking import Booking
+from app.models.hotel import Hotel
 from app.models.room import Room
 from app.storage.dao import BaseDAO
 
@@ -71,7 +70,7 @@ class BookingDAO(BaseDAO):
         return room_price.scalar()
 
     @classmethod
-    async def get_free_rooms(cls, session: AsyncSession, room_id: int, date_from: date, date_to: date) -> int:
+    async def get_free_rooms(cls, session: AsyncSession, room_id: int, date_from: date, date_to: date) -> Any:
         """
         Получение свободных комнат по id комнаты в указанные даты
         :param session: async сессия БД
@@ -83,18 +82,19 @@ class BookingDAO(BaseDAO):
         """
         WITH booked_rooms AS (
             SELECT * FROM bookings
-            WHERE room_id = 1
+            WHERE room_id = 10
             AND(
                 (date_from BETWEEN '2023-05-15' AND '2023-06-20')
                 OR
                 (date_from <= '2023-05-15' AND date_to > '2023-05-15')
             )
         )
-        SELECT rooms.quantity - COUNT(booked_rooms.room_id)
+        SELECT rooms.quantity - COUNT(booked_rooms.room_id), rooms.hotel_id, rooms.name, hotels.name
         FROM rooms
+        LEFT JOIN hotels ON rooms.hotel_id = hotels.id
         LEFT JOIN booked_rooms ON booked_rooms.room_id = rooms.id
-        WHERE rooms.id = 1
-        GROUP BY rooms.quantity, booked_rooms.room_id
+        WHERE rooms.id = 10
+        GROUP BY rooms.quantity, booked_rooms.room_id, rooms.hotel_id, rooms.name, hotels.name
         """
         try:
             # забронированные комнаты (таблица)
@@ -117,27 +117,34 @@ class BookingDAO(BaseDAO):
             )
 
             """
-            SELECT rooms.quantity - COUNT(booked_rooms.room_id) FROM rooms
+            SELECT rooms.quantity - COUNT(booked_rooms.room_id), rooms.hotel_id, rooms.name, hotels.name
+            FROM rooms
+            LEFT JOIN hotels ON rooms.hotel_id = hotels.id
             LEFT JOIN booked_rooms ON booked_rooms.room_id = rooms.id
-            WHERE rooms.id = 1
-            GROUP BY rooms.quantity, booked_rooms.room_id
+            WHERE rooms.id = 10
+            GROUP BY rooms.quantity, booked_rooms.room_id, rooms.hotel_id, rooms.name, hotels.name
             """
 
             # количество свободных комнат
             free_rooms_quant_query = (
-                select(Room.quantity - func.count(booked_rooms.c.room_id))
+                select(
+                    (Room.quantity - func.count(booked_rooms.c.room_id)).label("free_rooms"),
+                    Room.hotel_id,
+                    Room.name.label("room_name"),
+                    Hotel.name.label("hotel_name")
+                )
                 .select_from(Room)
+                .join(Hotel, Room.hotel_id == Hotel.id, isouter=True)
                 .join(booked_rooms, booked_rooms.c.room_id == Room.id, isouter=True)
                 .where(Room.id == room_id)
-                .group_by(Room.quantity, booked_rooms.c.room_id)
+                .group_by(Room.quantity, booked_rooms.c.room_id, Room.hotel_id, Room.name, Hotel.name)
             )
 
             # распечатка sql запроса
             # print(remaining_rooms_query.compile(engine, compile_kwargs={"literal_binds": True}))
 
             free_rooms = await session.execute(free_rooms_quant_query)
-            free_rooms: int = free_rooms.scalar()
-            return free_rooms
+            return free_rooms.mappings().all()
         except (SQLAlchemyError, Exception) as err:
             if isinstance(err, SQLAlchemyError):
                 msg = "Database Exc: Cannot add booking"

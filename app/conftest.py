@@ -3,3 +3,4 @@ import os
 
 os.environ["MODE"] = "TEST"
 os.environ["LOG_LEVEL"] = "CRITICAL"
+os.environ["DB_HOST"] = "localhost"

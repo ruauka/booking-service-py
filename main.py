@@ -52,23 +52,23 @@ app.add_middleware(
 )
 
 
-@app.middleware("http")
-async def request_time_count(request: Request, next):
-    """
-    Middleware для запросов.
-    :param request: тело запроса
-    :param next: хендлер
-    :return:
-    """
-    start_time = time.time()
-    response = await next(request)
-    process_time = time.time() - start_time
-    # При подключении Prometheus + Grafana подобный лог не требуется
-    logger.info("Request handling time", extra={
-        "status_code": response.status_code,
-        "process_time": round(process_time, 4),
-    })
-    return response
+# @app.middleware("http")
+# async def request_time_count(request: Request, next):
+#     """
+#     Middleware для запросов.
+#     :param request: тело запроса
+#     :param next: хендлер
+#     :return:
+#     """
+#     start_time = time.time()
+#     response = await next(request)
+#     process_time = time.time() - start_time
+#     # При подключении Prometheus + Grafana подобный лог не требуется
+#     logger.info("Request handling time", extra={
+#         "status_code": response.status_code,
+#         "process_time": round(process_time, 4),
+#     })
+#     return response
 
 
 # логгирование ошибок в SENTRY

@@ -44,18 +44,22 @@ async def add_booking(
     :param session: async сессия БД
     :return: новое бронирование
     """
-    # получение свободных комнат по id комнаты в указанные даты
-    free_rooms = await BookingDAO.get_free_rooms(session, room_id, date_from, date_to)
+    # получение свободных комнат по id комнаты в указанные даты и ифно по гостинице
+    room_hotel_info = await BookingDAO.get_free_rooms(session, room_id, date_from, date_to)
     # проверка на свободные комнаты
-    if free_rooms <= 0:
+    if room_hotel_info[0]["free_rooms"] <= 0:
         logger.error(NoAvailableRoomsErr.detail, extra={"status_code": NoAvailableRoomsErr.status_code})
         raise NoAvailableRoomsErr
-
     booking = await BookingDAO.add(session, user.id, room_id, date_from, date_to)
     # парсинг ответа алхимии в словарь для celery
     booking_dict = parse_obj_as(BookingResponse, booking).dict()
     # фоновый вызов celery
-    send_booking_confirmation_email.delay(booking_dict, user.email)
+    send_booking_confirmation_email.delay(
+        booking_dict,
+        user.email,
+        room_hotel_info[0]["room_name"],
+        room_hotel_info[0]["hotel_name"]
+    )
     # выходная валидация не требуется, booking_dict провалидирован parse_obj_as()
     return booking_dict
 

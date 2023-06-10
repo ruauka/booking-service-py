@@ -1,8 +1,8 @@
 from datetime import date
 from typing import Any
 
-from fastapi import HTTPException, status
-from sqlalchemy import and_, func, or_, select
+from sqlalchemy import Integer, and_, func, or_, select
+from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -40,7 +40,7 @@ class HotelDAO(BaseDAO):
             GROUP BY room_id
         ),
         booked_hotels AS (
-            SELECT hotel_id, SUM(rooms.quantity - COALESCE(rooms_booked, 0)) AS rooms_left
+            SELECT hotel_id, SUM(rooms.quantity - COALESCE(rooms_booked, 0)) AS rooms_left, array_agg(id) as room_ids
             FROM rooms
             LEFT JOIN booked_rooms ON booked_rooms.room_id = rooms.id
             GROUP BY hotel_id
@@ -70,9 +70,9 @@ class HotelDAO(BaseDAO):
             )
 
             booked_hotels = (
-                select(Room.hotel_id, func.sum(
-                    Room.quantity - func.coalesce(booked_rooms.c.rooms_booked, 0)
-                ).label("rooms_left"))
+                select(Room.hotel_id,
+                       func.sum(Room.quantity - func.coalesce(booked_rooms.c.rooms_booked, 0)).label("rooms_left"),
+                       func.array_agg(Room.id, type_=ARRAY(Integer)).label("room_ids"))
                 .select_from(Room)
                 .join(booked_rooms, booked_rooms.c.room_id == Room.id, isouter=True)
                 .group_by(Room.hotel_id)
@@ -87,6 +87,7 @@ class HotelDAO(BaseDAO):
                 select(
                     Hotel.__table__.columns,
                     booked_hotels.c.rooms_left,
+                    booked_hotels.c.room_ids,
                 )
                 .join(booked_hotels, booked_hotels.c.hotel_id == Hotel.id, isouter=True)
                 .where(

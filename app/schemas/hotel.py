@@ -50,6 +50,7 @@ class HotelByLocationResponse(HotelResponse):
     Валидационная схема исходящего запроса полей гостиницы с полем rooms_left.
     """
     rooms_left: int
+    room_ids: List
 
     # парсинг ответа sqlalchemy в pydantic
     class Config:
