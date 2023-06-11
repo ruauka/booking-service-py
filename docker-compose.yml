@@ -23,33 +23,31 @@ services:
     restart: always
     env_file:
       - creds.env
-#    ports:
-#      - "5432:5432"
+    #    ports:
+    #      - "5432:5432"
     volumes:
       - db:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      test: [ "CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}" ]
       interval: 5s
       timeout: 5s
       retries: 5
 
-#  pgadmin:
-#    image: dpage/pgadmin4
-#    container_name: pgadmin
-#    restart: always
-#    env_file:
-#      - creds.env
-#    volumes:
-#      - pgadmin:/var/lib/pgadmin
-#    ports:
-#      - "5050:80"
+  #  pgadmin:
+  #    image: dpage/pgadmin4
+  #    container_name: pgadmin
+  #    restart: always
+  #    env_file:
+  #      - creds.env
+  #    volumes:
+  #      - pgadmin:/var/lib/pgadmin
+  #    ports:
+  #      - "5050:80"
 
   redis:
     image: "redis:latest"
     container_name: redis
     restart: always
-    env_file:
-      - creds.env
     ports:
       - "6379:6379"
     healthcheck:
@@ -61,7 +59,7 @@ services:
   celery:
     build:
       dockerfile: Dockerfile
-    container_name: app_celery
+    container_name: celery
     restart: always
     command: [ "/app/bash/celery.sh", "celery" ]
     env_file:
@@ -74,7 +72,7 @@ services:
     build:
       dockerfile: Dockerfile
     restart: always
-    container_name: app_flower
+    container_name: flower
     command: [ "/app/bash/celery.sh", "flower" ]
     env_file:
       - creds.env
@@ -84,55 +82,31 @@ services:
       redis:
         condition: service_healthy
 
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    restart: always
+    ports:
+      - "9090:9090"
+    depends_on:
+      - app
+
+  grafana:
+    image: grafana/grafana:9.4.7
+    container_name: grafana
+    volumes:
+      - ./grafana/config.ini:/etc/grafana/grafana.ini
+      - ./grafana/datasource.yml:/etc/grafana/provisioning/datasources/default.yml
+      - ./grafana/dashboard.yml:/etc/grafana/provisioning/dashboards/default.yml
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+
 volumes:
   db:
-#  pgadmin:
-
-#version: "3.8"
-#
-#services:
-#  database:
-#    image: postgres:latest
-#    container_name: database
-##    restart: always
-#    env_file:
-#      - creds.env
-#    ports:
-#      - "5432:5432"
-#    volumes:
-#      - db:/var/lib/postgresql/data
-#    healthcheck:
-#      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
-#      interval: 5s
-#      timeout: 5s
-#      retries: 5
-#
-#  pgadmin:
-#    image: dpage/pgadmin4
-#    container_name: pgadmin
-##    restart: always
-#    env_file:
-#      - creds.env
-#    volumes:
-#      - pgadmin:/var/lib/pgadmin
-#    ports:
-#      - "5050:80"
-#
-#  redis:
-#    image: "redis:latest"
-#    container_name: redis
-##    restart: always
-#    env_file:
-#      - creds.env
-#    ports:
-#      - "6379:6379"
-#    healthcheck:
-#      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
-#      interval: 5s
-#      timeout: 5s
-#      retries: 5
-#
-#
-#volumes:
-#  db:
 #  pgadmin:

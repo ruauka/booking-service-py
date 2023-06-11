@@ -53,6 +53,7 @@ Pillow==9.5.0
 platformdirs==3.5.1
 pluggy==1.0.0
 prometheus-client==0.16.0
+prometheus-fastapi-instrumentator==6.0.0
 prompt-toolkit==3.0.38
 pyasn1==0.4.8
 pycodestyle==2.10.0

@@ -44,8 +44,8 @@ flake:
 isort:
 	isort .
 
-#pytest_db:
-#	docker-compose -f docker-compose.pytest.yml up -d --remove-orphans
-#
-#pytest_db_down:
-#	docker-compose down
+docker_dev_up:
+	docker-compose -f docker-compose.dev.yml up -d --remove-orphans
+
+docker_dev_down:
+	docker-compose down

@@ -59,7 +59,12 @@ async def get_hotels_by_location(
         logger.error(LongPeriodBookingErr.detail, extra={"status_code": LongPeriodBookingErr.status_code})
         raise LongPeriodBookingErr
 
-    return await HotelDAO.get_hotels_by_location(session, location, date_from, date_to)
+    hotels = await HotelDAO.get_hotels_by_location(session, location, date_from, date_to)
+    if len(hotels) == 0:
+        logger.error(HotelNotFoundErr.detail, extra={"status_code": HotelNotFoundErr.status_code})
+        raise HotelNotFoundErr
+
+    return hotels
 
 
 @router.post("", status_code=201, dependencies=[Depends(admin_check)])

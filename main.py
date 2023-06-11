@@ -21,6 +21,7 @@ from app.router.uploader import router as uploader_router
 from app.router.user import router as user_router
 from app.storage.database import engine
 from config import cfg
+from prometheus_fastapi_instrumentator import Instrumentator
 
 app = FastAPI()
 
@@ -90,6 +91,14 @@ async def startup():
     """
     redis = aioredis.from_url(cfg.redis_url, encoding="utf8", decode_responses=True)
     FastAPICache.init(RedisBackend(redis), prefix="booking-cache")
+
+
+# Подключение Prometheus
+instrumentator = Instrumentator(
+    should_group_status_codes=False,
+    excluded_handlers=[".*admin.*", "/metrics"],
+)
+instrumentator.instrument(app).expose(app)
 
 
 # Подключение админки
