@@ -54,14 +54,14 @@ app.add_middleware(
 
 
 @app.middleware("http")
-async def request_time_count(request: Request, next):
+async def request_time_count(request: Request, next_func):
     """
     Middleware для запросов.
     :param request: тело запроса
-    :param next: хендлер
+    :param next_func: хендлер
     """
     start_time = time.time()
-    response = await next(request)
+    response = await next_func(request)
     process_time = time.time() - start_time
 
     extra = {
