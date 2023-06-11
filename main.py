@@ -68,13 +68,15 @@ async def request_time_count(request: Request, next):
         "status_code": response.status_code,
         "duration": round(process_time, 4),
     }
+    # валидация json
     if response.status_code == 422:
         logger.error(msg="failed validation", extra=extra)
         return response
-
+    # failed ответы
     if response.status_code in [400, 401, 403, 500]:
         return response
     else:
+        # success ответы
         logger.info(msg="success", extra=extra)
 
     return response
