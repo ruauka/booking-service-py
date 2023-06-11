@@ -12,6 +12,7 @@ from app.errors import (
     UnauthorizedUserErr,
     UnknownJWTPareErr,
 )
+from app.logger import logger
 from app.models.user import User
 from app.storage.database import get_session
 from app.storage.user import UserDAO
@@ -26,6 +27,7 @@ def get_token(request: Request) -> Optional[str]:
     """
     token = request.cookies.get("JWT")
     if not token:
+        logger.error(TokenAbsentErr.detail, extra={"status_code": TokenAbsentErr.status_code})
         raise TokenAbsentErr
 
     return token
@@ -64,10 +66,12 @@ async def auth_user(
     """
     user_id: str = payload.get("sub")
     if not user_id:
+        logger.error(UnauthorizedUserErr.detail, extra={"status_code": UnauthorizedUserErr.status_code})
         raise UnauthorizedUserErr
 
     user = await UserDAO.get_one(session, id=int(user_id))
     if not user:
+        logger.error(UnauthorizedUserErr.detail, extra={"status_code": UnauthorizedUserErr.status_code})
         raise UnauthorizedUserErr
 
     return user
@@ -79,4 +83,5 @@ async def admin_check(user: User = Depends(auth_user)):
     :param user: Авторизованный пользователь.
     """
     if not user.admin:
+        logger.error(NoAdminErr.detail, extra={"status_code": NoAdminErr.status_code})
         raise NoAdminErr

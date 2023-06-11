@@ -59,16 +59,24 @@ async def request_time_count(request: Request, next):
     Middleware для запросов.
     :param request: тело запроса
     :param next: хендлер
-    :return:
     """
     start_time = time.time()
     response = await next(request)
     process_time = time.time() - start_time
-    # При подключении Prometheus + Grafana подобный лог не требуется
-    logger.info("Request handling time", extra={
+
+    extra = {
         "status_code": response.status_code,
-        "process_time": round(process_time, 4),
-    })
+        "duration": round(process_time, 4),
+    }
+    if response.status_code == 422:
+        logger.error(msg="failed validation", extra=extra)
+        return response
+
+    if response.status_code in [400, 401, 403, 500]:
+        return response
+    else:
+        logger.info(msg="success", extra=extra)
+
     return response
 
 
@@ -99,7 +107,6 @@ instrumentator = Instrumentator(
     excluded_handlers=[".*admin.*", "/metrics"],
 )
 instrumentator.instrument(app).expose(app)
-
 
 # Подключение админки
 admin = Admin(app, engine, authentication_backend=authentication_backend)
