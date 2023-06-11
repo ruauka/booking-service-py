@@ -20,8 +20,8 @@ INSERT INTO rooms (hotel_id, name, description, price, quantity, services, image
 (6, 'Стандарт (типовой корпус)', 'Стандартный номер.', 8125, 45, '{}', 17);
 
 INSERT INTO users (email, hashed_password) VALUES
-('ruauka@example.ru', '$2b$12$NWKud/CAARDSrZugGzrBluGeioKy3BmrSObHqAxzufHcmy1QQ.k9e'),
-('ushakov@example.ru', '$2b$12$OIUc7RkbagFHDs24F0Nm2OLDijLgDMykw5Ymri9HO7gDMmW/m6bhi');
+('ruauka@example.com', '$2b$12$NWKud/CAARDSrZugGzrBluGeioKy3BmrSObHqAxzufHcmy1QQ.k9e'),
+('ushakov@example.com', '$2b$12$OIUc7RkbagFHDs24F0Nm2OLDijLgDMykw5Ymri9HO7gDMmW/m6bhi');
 
 INSERT INTO bookings (room_id, user_id, date_from, date_to, price) VALUES
 (1, 1, '2023-06-15', '2023-06-30', 24500),

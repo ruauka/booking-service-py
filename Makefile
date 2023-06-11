@@ -44,8 +44,14 @@ flake:
 isort:
 	isort .
 
+docker_build:
+	docker-compose up -d --build
+
+docker_up:
+	docker-compose up -d
+
+docker_down:
+	docker-compose down
+
 docker_dev_up:
 	docker-compose -f docker-compose.dev.yml up -d --remove-orphans
-
-docker_dev_down:
-	docker-compose down
