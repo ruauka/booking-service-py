@@ -10,6 +10,7 @@ billiard==3.6.4.0
 black==23.3.0
 celery==5.2.7
 certifi==2022.12.7
+charset-normalizer==3.1.0
 click==8.1.3
 click-didyoumean==0.3.0
 click-plugins==1.1.1
@@ -73,6 +74,7 @@ pytz==2023.3
 pytzdata==2020.1
 PyYAML==6.0
 redis==4.5.5
+requests==2.31.0
 respx==0.20.1
 rfc3986==1.5.0
 rsa==4.9
@@ -87,6 +89,7 @@ tomli==2.0.1
 tornado==6.3.2
 typing_extensions==4.5.0
 ujson==5.7.0
+urllib3==2.0.3
 uvicorn==0.21.1
 uvloop==0.17.0
 vine==5.0.0

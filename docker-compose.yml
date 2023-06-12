@@ -107,6 +107,13 @@ services:
     depends_on:
       - prometheus
 
+  generator:
+    image: ruauka/generator:latest
+    container_name: generator
+    restart: always
+    depends_on:
+      - app
+
 volumes:
   db:
 #  pgadmin:
