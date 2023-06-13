@@ -81,7 +81,7 @@
                     "refId": "A"
                 }
             ],
-            "title": "Всего запросов 200",
+            "title": "Всего запросов",
             "type": "stat"
         },
         {
@@ -416,7 +416,7 @@
             ],
             "thresholds": [],
             "timeRegions": [],
-            "title": "Использование памяти, RAM",
+            "title": "Использование RAM",
             "tooltip": {
                 "shared": true,
                 "sort": 0,
@@ -615,7 +615,7 @@
             ],
             "thresholds": [],
             "timeRegions": [],
-            "title": "RPS количество ошибок (15 сек)",
+            "title": "RPS количества ошибок (15 сек)",
             "tooltip": {
                 "shared": true,
                 "sort": 0,
