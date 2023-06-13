@@ -1,5 +1,4 @@
 from email.message import EmailMessage
-from typing import List
 
 from pydantic import EmailStr
 

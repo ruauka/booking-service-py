@@ -40,7 +40,7 @@ async def test_get_hotel_by_id(admin_async_client: AsyncClient, hotel_id, status
 
 async def test_get_all_hotels(async_client: AsyncClient):
     """Тест получения всех гостиниц"""
-    resp = await async_client.get(f"/hotels")
+    resp = await async_client.get("/hotels")
     assert resp.status_code == 200
 
 

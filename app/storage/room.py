@@ -5,7 +5,6 @@ from sqlalchemy import and_, func, or_, select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.errors import UnknownErr
 from app.logger import logger
 from app.models.booking import Booking
 from app.models.room import Room

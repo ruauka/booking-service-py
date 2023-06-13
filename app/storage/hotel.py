@@ -6,7 +6,6 @@ from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.errors import UnknownErr
 from app.logger import logger
 from app.models.booking import Booking
 from app.models.hotel import Hotel

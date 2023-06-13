@@ -1,6 +1,5 @@
 import smtplib
 from pathlib import Path
-from typing import List
 
 from PIL import Image
 from pydantic import EmailStr

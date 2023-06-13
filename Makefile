@@ -29,7 +29,7 @@ pytest_db_stop:
 	docker stop pytest_db
 
 test:
-	pytest -v -s
+	@pytest -v -s
 
 test_cov:
 	pytest -v -s --cov=app --cov-report=html && open htmlcov/index.html
@@ -39,7 +39,7 @@ black:
 	black app --diff --color
 
 flake:
-	flake8 app
+	@flake8 app --count --statistics
 
 isort:
 	isort .
