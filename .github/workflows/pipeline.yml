@@ -47,7 +47,7 @@ jobs:
 
       - name: Test
         run: |
-          docker run -d --rm --name=pytest_db -p 5432:5432 -e POSTGRES_USER=test -e POSTGRES_PASSWORD=test -e POSTGRES_DB=test postgres:latest
+          pytest -v -s
 
 #  lint:
 #    runs-on: ubuntu-latest
