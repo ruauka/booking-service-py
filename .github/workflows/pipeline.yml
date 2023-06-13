@@ -16,7 +16,7 @@ jobs:
       # Label used to access the service container
       postgres:
         # Docker Hub image
-        image: postgres:latest
+        image: postgres
         # Provide the password for postgres
         env:
           POSTGRES_USER: test
@@ -47,7 +47,7 @@ jobs:
 
       - name: Test
         run: |
-          echo 1111111
+          docker run -d --rm --name=pytest_db -p 5432:5432 -e POSTGRES_USER=test -e POSTGRES_PASSWORD=test -e POSTGRES_DB=test postgres:latest
 
 #  lint:
 #    runs-on: ubuntu-latest
