@@ -46,8 +46,8 @@ class Cfg(BaseSettings):
                f"test"
 
     # секреты для JWT
-    SECRET_KEY: str = ""
-    ALGORITHM: str = ""
+    SECRET_KEY: str = "secretKey"
+    ALGORITHM: str = "HS256"
 
     @property
     def secret_key(self) -> str:
