@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Literal, Optional
 
 from pydantic import BaseSettings
 
@@ -13,11 +13,11 @@ class Cfg(BaseSettings):
     LOG_LEVEL: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = ""
 
     # конфиг БД
-    DB_HOST: str = ""
-    DB_PORT: int = 0
-    POSTGRES_USER: str = ""
-    POSTGRES_PASSWORD: str = ""
-    POSTGRES_DB: str = ""
+    DB_HOST: Optional[str]
+    DB_PORT: Optional[int]
+    POSTGRES_USER: Optional[str]
+    POSTGRES_PASSWORD: Optional[str]
+    POSTGRES_DB: Optional[str]
 
     @property
     def db_url(self) -> str:
@@ -58,18 +58,18 @@ class Cfg(BaseSettings):
         return self.ALGORITHM
 
     # конфиг для redis
-    REDIS_HOST: str = ""
-    REDIS_PORT: int = 0
+    REDIS_HOST: Optional[str]
+    REDIS_PORT: Optional[int]
 
     @property
     def redis_url(self):
         return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}"
 
     # конфиг для почтовой рассылки для celery
-    SMTP_HOST: str = ""
-    SMTP_PORT: int = 0
-    SMTP_GMAIL: str = ""
-    SMTP_PASSWORD: str = ""
+    SMTP_HOST: Optional[str]
+    SMTP_PORT: Optional[int]
+    SMTP_GMAIL: Optional[str]
+    SMTP_PASSWORD: Optional[str]
 
     class Config:
         """
