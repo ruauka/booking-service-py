@@ -38,7 +38,7 @@ test_cov:
 black:
 	black app --diff --color
 
-flake:
+lint:
 	@flake8 app --count --statistics
 
 isort:
