@@ -8,9 +8,9 @@ class Cfg(BaseSettings):
     Конфигурация сервиса.
     """
     # мод работы сервиса
-    MODE: Literal["DEV", "TEST", "PROD"] = ""
+    MODE: Optional[Literal["DEV", "TEST", "PROD"]]
     # уровень логирования
-    LOG_LEVEL: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = ""
+    LOG_LEVEL: Optional[Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]]
 
     # конфиг БД
     DB_HOST: Optional[str]
