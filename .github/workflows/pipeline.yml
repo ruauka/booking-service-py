@@ -44,6 +44,7 @@ jobs:
           pytest -v -s
 
   lint:
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout master
         uses: actions/checkout@v3
