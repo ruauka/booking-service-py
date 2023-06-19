@@ -4,6 +4,7 @@ services:
   app:
     container_name: app
     build:
+      context: .
       dockerfile: Dockerfile
     restart: always
     env_file:
@@ -62,8 +63,8 @@ services:
     container_name: celery
     restart: always
     command: [ "/app/bash/celery.sh", "celery" ]
-    env_file:
-      - creds.env
+#    env_file:
+#      - creds.env
     depends_on:
       redis:
         condition: service_healthy
@@ -74,8 +75,8 @@ services:
     restart: always
     container_name: flower
     command: [ "/app/bash/celery.sh", "flower" ]
-    env_file:
-      - creds.env
+#    env_file:
+#      - creds.env
     ports:
       - "5555:5555"
     depends_on:
