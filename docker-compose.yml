@@ -120,8 +120,8 @@ services:
       - ./grafana/dashboard.yml:/etc/grafana/provisioning/dashboards/default.yml
       - ./grafana/dashboards:/var/lib/grafana/dashboards
     restart: always
-    ports:
-      - "3000:3000"
+#    ports:
+#      - "3000:3000"
     depends_on:
       - prometheus
 
