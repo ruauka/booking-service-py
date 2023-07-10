@@ -1,6 +1,24 @@
 version: "3.8"
 
 services:
+  nginx:
+    container_name: nginx
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    links:
+     - app
+     - flower
+     - grafana
+    depends_on:
+      - app
+      - flower
+      - grafana
+
   app:
     container_name: app
     build:
@@ -10,8 +28,8 @@ services:
     env_file:
       - creds.env
     command: [ "/app/bash/app.sh" ]
-    ports:
-      - "8000:8000"
+#    ports:
+#      - "8000:8000"
     depends_on:
       database:
         condition: service_healthy
@@ -74,11 +92,10 @@ services:
       dockerfile: Dockerfile
     restart: always
     container_name: flower
-    command: [ "/app/bash/celery.sh", "flower" ]
-#    env_file:
-#      - creds.env
-    ports:
-      - "5555:5555"
+    command: [ "/app/bash/celery.sh", "flower_nginx" ]
+#    command: [ "/app/bash/celery.sh", "flower" ]
+#    ports:
+#      - "5555:5555"
     depends_on:
       redis:
         condition: service_healthy
@@ -89,8 +106,8 @@ services:
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     restart: always
-    ports:
-      - "9090:9090"
+#    ports:
+#      - "9090:9090"
     depends_on:
       - app
 

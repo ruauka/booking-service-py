@@ -55,3 +55,6 @@ docker_down:
 
 docker_dev_up:
 	docker-compose -f docker-compose.dev.yml up -d --remove-orphans
+
+ip:
+	ipconfig getifaddr en0
