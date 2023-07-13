@@ -95,6 +95,7 @@ async def request_time_count(request: Request, next_func):
 @app.on_event("startup")
 async def startup():
     """
+    Вызывается при старте сервиса (при событии 'startup').
     Коннект с redis.
     redis-cli
     keys *
