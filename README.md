@@ -99,7 +99,7 @@ Lib - https://pypi.org/project/python-json-logger/
 
 ### Testing
 Service is covered with unit and integration tests.
-For testing, it is necessary to raise the test database (PostgeSQL) in the docker with terminal command:
+For testing, it is necessary to raise the test database (PostgeSQL) in docker with terminal command:
 ```bash
 make pytest_db_up
 ```
@@ -158,7 +158,6 @@ docker-compose stop
 - login
 
 Sample steps for booking a hotel room:
-- create new user with you actual Email
 - check for available hotels and rooms in them by certain region - http://localhost/docs#/Hotels/get_hotels_by_location_hotels_location_get
 - book a room by id - http://localhost/docs#/Bookings/add_booking_bookings_post
 - a booking confirmation should be sent to your Email
