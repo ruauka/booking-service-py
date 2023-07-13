@@ -23,7 +23,9 @@ from app.storage.database import engine
 from config import cfg
 from prometheus_fastapi_instrumentator import Instrumentator
 
-app = FastAPI()
+app = FastAPI(
+    title="Booking service",
+)
 
 # регистрация хендлеров
 app.include_router(auth_router)
