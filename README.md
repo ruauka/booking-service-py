@@ -26,8 +26,8 @@ Booking hotels pet-project service.
 - [CI](#ci)
 
 ### Description
-The service allows:
-- CRUD users, admins, hotels, rooms, bookings
+Service allows:
+- book a hotel room
 - notify the customer about the booking by Email
 - manage booking orders using Admin Panel
 
@@ -44,6 +44,7 @@ Lib - https://fastapi.tiangolo.com/
 
 ### Database
 PostgreSQL is used as the database. All interactions with the database are executed with ORM sqlalchemy.
+Migrations executes automatically when the service starts.
 
 Lib - https://www.sqlalchemy.org/
 
@@ -53,21 +54,21 @@ Lib - https://www.sqlalchemy.org/
 </p>
 
 ### Auth
-Authorization using a JWT is applied.
-The user can have an administrator role, which gives the opportunity to edit entities.
+JWT Authorization.
+User can have an administrator role, which gives the opportunity to edit entities.
 
 Lib - https://pypi.org/project/python-jose/
 
 ### Cache
-`Redis` is used for caching:
-- To cache heavy requests: Getting a list of hotels according to the specified parameters
-- For background tasks
+Redis is used for caching:
+- Heavy requests: Getting a list of hotels according to the specified parameters
+- Background tasks
 
 Lib - https://pypi.org/project/fastapi-cache2/
 
 ### Background tasks
 ### Celery
-Celery is used to execute a background task: send an email notification to the client after booking a room.
+Celery is used to execute a background task: send an email notification to the customer after booking a room.
 
 Lib - https://pypi.org/project/celery/
 
@@ -98,8 +99,10 @@ Lib - https://pypi.org/project/python-json-logger/
 
 ### Testing
 Service is covered with unit and integration tests.
-For testing, it is necessary to raise the test database in the docker.
-Test db - PostgeSQL.
+For testing, it is necessary to raise the test database (PostgeSQL) in the docker with terminal command:
+```bash
+make pytest_db_up
+```
 
 Lib - https://pypi.org/project/pytest/
 
@@ -129,7 +132,7 @@ To start service run in terminal:
 ```bash
 docker-compose up -d
 ```
-Service swagger Available at link - http://localhost/docs
+Service swagger available at link - http://localhost/docs
 To fill the database with test data:
  - create new user with admin role
  - login
