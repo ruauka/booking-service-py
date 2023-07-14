@@ -58,3 +58,6 @@ docker_dev_up:
 
 ip:
 	ipconfig getifaddr en0
+
+check:
+	@coverage run -m pytest -v -s && coverage report && flake8 app --count --statistics

@@ -41,7 +41,7 @@ jobs:
 
       - name: Generate Report
         run: |
-          coverage run -m pytest
+          coverage run -m pytest -v -s
           coverage report
 
       - name: Upload Coverage to Codecov
