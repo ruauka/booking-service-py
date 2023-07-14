@@ -188,7 +188,7 @@ Lib - https://aminalaee.dev/sqladmin
 
 ### Monitoring
 
-To monitor the operation of the service are used `Prometheus` and `Grafana`.
+Monitoring tools are `Prometheus` and `Grafana`.
 
 To demonstrate the work of dashboards, in docker is running a script, which polls the service.
 
