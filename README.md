@@ -44,12 +44,13 @@ docker-compose up -d
 ```
 
 Service swagger is available at link - http://localhost/docs
+
 To fill the database with test data:
 
-- create new user with admin role
-- login new user
-- use uploader link http://localhost/docs#/Uploader/upload_from_sql_file_upload_sql_post
-- upload file. The file with test data is in directory: `testdata/data.sql`
+- **register** new user with admin role
+- **login** new user
+- **upload** test data file with uploader
+- file with test data is in directory: `testdata/data.sql`
 
 <p align="left">
     <img src="assets/swagger.png" width="700">
@@ -69,8 +70,8 @@ docker-compose stop
 
 ### Usage
 
-- create new user with you **actual Email**
-- login new user
+- **register** new user with you **actual Email**
+- **login** new user
 
 Sample steps for booking a hotel room:
 
