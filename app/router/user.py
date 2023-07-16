@@ -31,7 +31,6 @@ async def get_user_by_id(
     """
     user = await UserDAO.get_one(session, id=user_id)
     if not user:
-        logger.error(UserNotFoundErr.detail, extra={"status_code": UserNotFoundErr.status_code})
         raise UserNotFoundErr
 
     return user
@@ -48,7 +47,6 @@ async def get_all_users(
     """
     users = await UserDAO.get_all(session)
     if len(users) == 0:
-        logger.error(NoUsersErr.detail, extra={"status_code": NoUsersErr.status_code})
         raise NoUsersErr
 
     return users
@@ -70,12 +68,10 @@ async def update_user_by_id(
     """
     # проверка на полностью пустые поля
     if new_fields.is_empty():
-        logger.error(EmptyFieldsToUpdateErr.detail, extra={"status_code": EmptyFieldsToUpdateErr.status_code})
         raise EmptyFieldsToUpdateErr
 
     user = await UserDAO.get_one(session, id=user_id)
     if not user:
-        logger.error(UserNotFoundErr.detail, extra={"status_code": UserNotFoundErr.status_code})
         raise UserNotFoundErr
 
     # установка новых значений полей
@@ -97,7 +93,6 @@ async def delete_user_by_id(
     """
     user = await UserDAO.get_one(session, id=user_id)
     if not user:
-        logger.error(UserNotFoundErr.detail, extra={"status_code": UserNotFoundErr.status_code})
         raise UserNotFoundErr
 
     return await UserDAO.delete(session, user_id)

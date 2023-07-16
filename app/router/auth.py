@@ -5,7 +5,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.auth.auth import create_JWT_token, get_password_hash, verify_user
 from app.auth.dependencies import auth_user
 from app.errors import IncorrectEmailOrPasswordErr, UserAlreadyExistsErr
-from app.logger import logger
 from app.models.user import User
 from app.schemas.user import UserLoginRequest, UserRequest, UserResponse
 from app.storage.database import get_session
@@ -31,7 +30,6 @@ async def register_user(
     """
     exist_user: User = await UserDAO.get_one(session, email=user.email)
     if exist_user:
-        logger.error(UserAlreadyExistsErr.detail, extra={"status_code": UserAlreadyExistsErr.status_code})
         raise UserAlreadyExistsErr
 
     hashed_password: str = get_password_hash(user.password)
@@ -53,7 +51,6 @@ async def login_user(
     """
     user = await verify_user(session, user.email, user.password)
     if not user:
-        logger.error(IncorrectEmailOrPasswordErr.detail, extra={"status_code": IncorrectEmailOrPasswordErr.status_code})
         raise IncorrectEmailOrPasswordErr
 
     token = create_JWT_token({"sub": str(user.id)})

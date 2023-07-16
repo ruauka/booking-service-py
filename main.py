@@ -56,26 +56,35 @@ app.add_middleware(
 
 
 @app.middleware("http")
-async def request_time_count(request: Request, next_func):
+async def request_time_count(request: Request, call_next):
     """
     Middleware для запросов.
     :param request: тело запроса
-    :param next_func: хендлер
+    :param call_next: хендлер
     """
     start_time = time.time()
-    response = await next_func(request)
+    response = await call_next(request)
     process_time = time.time() - start_time
 
+    func = request.scope.get("route", None)
+    if func is not None:
+        func = func.name
+
+    URL = request.url.path
+    if URL == "/metrics":
+        return response
+
     extra = {
+        "func": func,
+        "endpoint": URL,
+        "method": request.method,
         "status_code": response.status_code,
         "duration": round(process_time, 4),
     }
-    # валидация json
-    if response.status_code == 422:
-        logger.error(msg="failed validation", extra=extra)
-        return response
+
     # failed ответы
-    if response.status_code in [400, 401, 403, 500]:
+    if response.status_code in [400, 401, 403, 422, 500]:
+        logger.error(msg="failed", extra=extra)
         return response
     else:
         # success ответы

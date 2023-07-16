@@ -6,10 +6,14 @@
 ## Overview
 
 Booking hotels pet-project service.
+Service allows:
+
+- book a hotel room
+- notify the customer about the booking by Email
+- manage booking orders and other entities using Admin Panel
 
 ## Content
 
-- [Description](#description)
 - [Start](#start)
 - [Usage](#usage)
 - [CI](#ci)
@@ -27,13 +31,6 @@ Booking hotels pet-project service.
     - [Admin-panel](#admin-panel)
     - [Monitoring](#monitoring)
 
-### Description
-
-Service allows:
-
-- book a hotel room
-- notify the customer about the booking by Email
-- manage booking orders and other entities using Admin Panel
 
 ### Start
 
@@ -158,7 +155,7 @@ Logger can be configured by log-levels by env file:
 - ERROR
 - CRITICAL
 
-Logs are output to the console.
+Logs are output to console.
 <p align="left">
     <img src="assets/logger.png" width="700">
 </p>

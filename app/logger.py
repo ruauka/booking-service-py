@@ -24,9 +24,15 @@ class CustomJsonFormatter(jsonlogger.JsonFormatter):
 logger = logging.getLogger()
 # куда писать логи (консоль)
 logHandler = logging.StreamHandler()
-formatter = CustomJsonFormatter("%(timestamp)s %(level)s %(message)s %(module)s %(funcName)s")
+formatter = CustomJsonFormatter("%(timestamp)s %(level)s %(message)s %(module)s")
+# formatter = CustomJsonFormatter("%(timestamp)s %(level)s %(message)s %(module)s %(funcName)s")
 
 logHandler.setFormatter(formatter)
 logger.addHandler(logHandler)
 # установка уровня логгирования
 logger.setLevel(cfg.LOG_LEVEL)
+
+#
+# class LogResp:
+#
+#
