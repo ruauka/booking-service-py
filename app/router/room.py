@@ -13,7 +13,6 @@ from app.errors import (
     RoomAlreadyExistsErr,
     RoomNotFoundErr,
 )
-from app.logger import logger
 from app.models.room import Room
 from app.schemas.room import RoomRequest, RoomResponse, RoomUpdateRequest
 from app.storage.database import get_session

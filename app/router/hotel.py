@@ -15,7 +15,6 @@ from app.errors import (
     LongPeriodBookingErr,
     NoHotelsErr,
 )
-from app.logger import logger
 from app.models.hotel import Hotel
 from app.schemas.hotel import (
     HotelByLocationResponse,

@@ -12,7 +12,6 @@ from app.errors import (
     NoAvailableRoomsErr,
     NoBookingsErr,
 )
-from app.logger import logger
 from app.models.user import User
 from app.schemas.booking import BookingResponse, BookingUpdateRequest
 from app.storage.booking import BookingDAO
