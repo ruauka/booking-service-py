@@ -86,9 +86,9 @@ async def request_time_count(request: Request, call_next):
     if response.status_code in [400, 401, 403, 422, 500]:
         logger.error(msg="failed", extra=extra)
         return response
-    else:
-        # success ответы
-        logger.info(msg="success", extra=extra)
+
+    # success ответы
+    logger.info(msg="success", extra=extra)
 
     return response
 

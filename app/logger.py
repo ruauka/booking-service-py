@@ -31,8 +31,3 @@ logHandler.setFormatter(formatter)
 logger.addHandler(logHandler)
 # установка уровня логгирования
 logger.setLevel(cfg.LOG_LEVEL)
-
-#
-# class LogResp:
-#
-#
